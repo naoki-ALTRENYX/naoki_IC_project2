@@ -128,30 +128,6 @@ def round_corners(card, r=CORNER_R, ss=4):
     white = np.full_like(card, 255, np.float32)
     return (card.astype(np.float32) * alpha + white * (1 - alpha)).astype(np.uint8)
 
-def enhance_card(card):
-    """CLAHE contrast fix + unsharp-mask sharpening."""
-    lab = cv2.cvtColor(card, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(lab)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    l = clahe.apply(l)
-    card = cv2.cvtColor(cv2.merge([l, a, b]), cv2.COLOR_LAB2BGR)
-    blur = cv2.GaussianBlur(card, (0, 0), 1.8)
-    return cv2.addWeighted(card, 1.6, blur, -0.6, 0)
-
-def drop_shadow(canvas, x, y, w, h, r, offset=10, sigma=12):
-    """Soft Gaussian drop shadow behind a rounded card."""
-    sh_x, sh_y = x + offset, y + offset
-    mask = np.zeros((A4_H, A4_W), np.float32)
-    cv2.rectangle(mask, (sh_x+r, sh_y), (sh_x+w-r, sh_y+h), 1.0, -1)
-    cv2.rectangle(mask, (sh_x, sh_y+r), (sh_x+w, sh_y+h-r), 1.0, -1)
-    for cx2, cy2 in [(sh_x+r,sh_y+r),(sh_x+w-r,sh_y+r),(sh_x+r,sh_y+h-r),(sh_x+w-r,sh_y+h-r)]:
-        cv2.circle(mask, (cx2, cy2), r, 1.0, -1)
-    ks = sigma * 6 + 1
-    mask = cv2.GaussianBlur(mask, (ks, ks), sigma)
-    for c in range(3):
-        layer = canvas[:, :, c].astype(np.float32)
-        canvas[:, :, c] = np.clip(layer * (1 - mask * 0.30), 0, 255).astype(np.uint8)
-
 def rounded_guide(canvas, x, y, w, h, r, color):
     cv2.line(canvas, (x+r, y), (x+w-r, y), color, 1, cv2.LINE_AA)
     cv2.line(canvas, (x+r, y+h), (x+w-r, y+h), color, 1, cv2.LINE_AA)
@@ -162,61 +138,57 @@ def rounded_guide(canvas, x, y, w, h, r, color):
     cv2.ellipse(canvas, (x+w-r, y+h-r), (r, r),   0, 0, 90, color, 1, cv2.LINE_AA)
     cv2.ellipse(canvas, (x+r, y+h-r),   (r, r),  90, 0, 90, color, 1, cv2.LINE_AA)
 
-def _put_label(canvas_bgr, text, cx, y_top):
-    """Render a label below a card using PIL for clean antialiased text."""
-    from PIL import ImageFont, ImageDraw
-    img_pil = Image.fromarray(cv2.cvtColor(canvas_bgr, cv2.COLOR_BGR2RGB))
-    draw = ImageDraw.Draw(img_pil)
-    font_size = round(5.5 * MM)
-    try:
-        font = ImageFont.truetype("arial.ttf", font_size)
-    except OSError:
-        try:
-            font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", font_size)
-        except OSError:
-            font = ImageFont.load_default()
-    bbox = draw.textbbox((0, 0), text, font=font)
-    tw = bbox[2] - bbox[0]
-    draw.text((cx - tw // 2, y_top), text, fill=(170, 170, 170), font=font)
-    canvas_bgr[:] = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
-
-def place(canvas, card, cx, cy, label=None):
-    card = enhance_card(card)
+def place(canvas, card, cx, cy):
     card = round_corners(card)
     h, w = card.shape[:2]
     x, y = cx - w // 2, cy - h // 2
-    drop_shadow(canvas, x, y, w, h, CORNER_R)
     canvas[y:y+h, x:x+w] = card
     rounded_guide(canvas, x-2, y-2, w+3, h+3, CORNER_R, GUIDE)
-    if label:
-        _put_label(canvas, label, cx, y + h + round(3 * MM))
-
-LABEL_H = round(11 * MM)
 
 def build_a4(front, back):
     canvas = np.full((A4_H, A4_W, 3), 255, np.uint8)
     cx = A4_W // 2
-    gap = round(18 * MM)
-    slot = CARD_H + LABEL_H
-    block = slot * (2 if back is not None else 1) + (gap if back is not None else 0)
+    gap = round(20 * MM)
+    block = CARD_H * (2 if back is not None else 1) + (gap if back is not None else 0)
     top = (A4_H - block) // 2
-    place(canvas, front, cx, top + CARD_H // 2, label="DEPAN  /  FRONT")
+    place(canvas, front, cx, top + CARD_H // 2)
     if back is not None:
-        place(canvas, back, cx, top + slot + gap + CARD_H // 2, label="BELAKANG  /  BACK")
-    # footer
-    from PIL import ImageFont, ImageDraw
-    img_pil = Image.fromarray(cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB))
-    draw = ImageDraw.Draw(img_pil)
-    footer = "Print at 100% Actual Size  ·  Do not scale  ·  IC → A4 Converter"
-    fs = round(3.5 * MM)
-    try:
-        fnt = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", fs)
-    except OSError:
-        fnt = ImageFont.load_default()
-    fb = draw.textbbox((0, 0), footer, font=fnt)
-    fw = fb[2] - fb[0]
-    draw.text((A4_W // 2 - fw // 2, A4_H - round(10 * MM)), footer, fill=(200, 200, 200), font=fnt)
-    return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+        place(canvas, back, cx, top + CARD_H + gap + CARD_H // 2)
+    return canvas
+
+# ---- orientation & front/back detection -------------------------------------
+_face_cascade = None
+
+def _get_cascade():
+    global _face_cascade
+    if _face_cascade is None:
+        _face_cascade = cv2.CascadeClassifier(
+            cv2.data.haarcascades + "haarcascade_frontalface_alt2.xml"
+        )
+    return _face_cascade
+
+def _has_face(bgr):
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    cv2.equalizeHist(gray, gray)
+    faces = _get_cascade().detectMultiScale(
+        gray, scaleFactor=1.05, minNeighbors=2, minSize=(18, 18)
+    )
+    return len(faces) > 0
+
+def orient_and_classify(card):
+    """Return (is_front, corrected_card).
+    Ensures landscape, tries 0° then 180° to find upright face.
+    Front = has face. Back = no face detected."""
+    h, w = card.shape[:2]
+    if h > w:
+        card = cv2.rotate(card, cv2.ROTATE_90_CLOCKWISE)
+    if _has_face(card):
+        return True, card
+    flipped = cv2.rotate(card, cv2.ROTATE_180)
+    if _has_face(flipped):
+        return True, flipped
+    return False, card
+
 
 def process_files(paths):
     cards = []
@@ -225,10 +197,22 @@ def process_files(paths):
             cards.extend(cards_from_image(page))
     if not cards:
         raise ValueError("No IC cards detected in the uploaded files.")
+
+    # sort: fronts first, then backs — always front on top, back below
+    fronts, backs = [], []
+    for card in cards:
+        is_front, oriented = orient_and_classify(card)
+        (fronts if is_front else backs).append(oriented)
+
+    ordered = []
+    for i in range(max(len(fronts), len(backs))):
+        if i < len(fronts): ordered.append(fronts[i])
+        if i < len(backs):  ordered.append(backs[i])
+
     pages = []
-    for i in range(0, len(cards), 2):
-        front = cards[i]
-        back = cards[i + 1] if i + 1 < len(cards) else None
+    for i in range(0, len(ordered), 2):
+        front = ordered[i]
+        back = ordered[i + 1] if i + 1 < len(ordered) else None
         pages.append(build_a4(front, back))
     pil = [Image.fromarray(cv2.cvtColor(p, cv2.COLOR_BGR2RGB)) for p in pages]
     out = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
