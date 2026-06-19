@@ -346,6 +346,7 @@
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 5000);
       successBanner.classList.add('show');
+      setTimeout(reset, 3000);
     } catch (err) {
       errorMsg.textContent = err.message;
       errorBanner.classList.add('show');
@@ -353,6 +354,15 @@
       setProcessing(false);
     }
   });
+
+  function reset() {
+    selectedFiles = [];
+    fileList.innerHTML = '';
+    convertBtn.disabled = true;
+    convertBtn.innerHTML = 'Convert to A4 PDF';
+    hideBanners();
+    fileInput.value = '';
+  }
 
   function setProcessing(on) {
     if (on) {
