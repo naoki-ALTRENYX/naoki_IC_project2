@@ -162,17 +162,21 @@ def build_a4(front, back):
 # ---- background removal (OpenCV GrabCut — no extra dependencies) -------------
 def _remove_bg(img_bgr: np.ndarray) -> np.ndarray:
     h, w = img_bgr.shape[:2]
-    mask     = np.zeros((h, w), np.uint8)
+    # Downsample to max 600px on longest side — GrabCut cost is O(pixels)
+    scale = min(1.0, 600 / max(h, w))
+    small = cv2.resize(img_bgr, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA) if scale < 1.0 else img_bgr
+    sh, sw = small.shape[:2]
+    mask     = np.zeros((sh, sw), np.uint8)
     bgd_mdl  = np.zeros((1, 65), np.float64)
     fgd_mdl  = np.zeros((1, 65), np.float64)
-    margin   = max(10, min(w, h) // 25)
-    rect     = (margin, margin, w - 2 * margin, h - 2 * margin)
-    cv2.grabCut(img_bgr, mask, rect, bgd_mdl, fgd_mdl, 8, cv2.GC_INIT_WITH_RECT)
-    fg_mask  = np.where((mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 1, 0).astype(np.uint8)
-    # morphological clean-up: fill holes, remove fringe
-    kernel   = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
-    fg_mask  = cv2.morphologyEx(fg_mask, cv2.MORPH_CLOSE, kernel, iterations=2)
-    fg_mask  = cv2.morphologyEx(fg_mask, cv2.MORPH_OPEN,  kernel, iterations=1)
+    margin   = max(5, min(sw, sh) // 25)
+    rect     = (margin, margin, sw - 2 * margin, sh - 2 * margin)
+    cv2.grabCut(small, mask, rect, bgd_mdl, fgd_mdl, 4, cv2.GC_INIT_WITH_RECT)
+    fg_small = np.where((mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 255, 0).astype(np.uint8)
+    # Upscale mask back to original size
+    fg_mask  = cv2.resize(fg_small, (w, h), interpolation=cv2.INTER_NEAREST)
+    kernel   = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
+    fg_mask  = cv2.morphologyEx(fg_mask, cv2.MORPH_CLOSE, kernel, iterations=1)
     result   = img_bgr.copy()
     result[fg_mask == 0] = 255   # background → white
     return result
