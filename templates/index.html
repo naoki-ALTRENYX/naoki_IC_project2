@@ -73,8 +73,12 @@
     #previewSection { margin-top: 20px; display: none; }
     .preview-label {
       font-size: 0.75rem; font-weight: 600; color: #6b7280;
-      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px;
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px;
     }
+    .preview-hint {
+      font-size: 0.78rem; color: #9ca3af; margin-bottom: 14px; line-height: 1.6;
+    }
+    .preview-hint strong { color: #374151; }
 
     .card-item {
       border: 1px solid #e5e7eb;
@@ -98,7 +102,18 @@
     .card-badge.front { background: #dbeafe; color: #1d4ed8; }
     .card-badge.back  { background: #f3f4f6; color: #6b7280; }
 
-    .card-actions { display: flex; gap: 6px; }
+    .card-hint {
+      font-size: 0.7rem; color: #9ca3af; margin-top: 3px;
+    }
+    .card-actions { display: flex; gap: 8px; align-items: flex-start; }
+    .action-group { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .action-group > div:first-child,
+    .action-group > button { display: flex; }
+    .action-group { flex-direction: column; }
+    .action-group-buttons { display: flex; gap: 4px; }
+    .action-group-label {
+      font-size: 0.62rem; color: #9ca3af; text-align: center; letter-spacing: 0.3px;
+    }
     .card-actions button {
       width: 32px; height: 32px; border-radius: 8px;
       border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
@@ -107,7 +122,7 @@
     }
     .card-actions button:hover { background: #f0f5ff; border-color: #1a56db; color: #1a56db; }
     .card-actions button:disabled { opacity: 0.3; cursor: default; }
-    .card-actions .sep { width: 1px; background: #e5e7eb; margin: 4px 2px; }
+    .card-actions .sep { width: 1px; background: #e5e7eb; margin: 0 2px; align-self: stretch; }
 
     .card-thumb-wrap {
       width: 100%;
@@ -205,7 +220,12 @@
   </div>
 
   <div id="previewSection">
-    <div class="preview-label">Detected Cards — adjust rotation or order before converting</div>
+    <div class="preview-label">Detected Cards</div>
+    <div class="preview-hint">
+      Card order here = print order on A4.<br/>
+      <strong>1st card prints on top · 2nd card prints below.</strong>
+      Use ↑↓ to swap, ↺↻ to fix rotation.
+    </div>
     <div id="cardList"></div>
   </div>
 
@@ -324,18 +344,34 @@
       const item = document.createElement('div');
       item.className = 'card-item';
 
-      const posLabel = idx === 0 ? 'Front' : idx === 1 ? 'Back' : `Card ${idx + 1}`;
-      const badgeCls = idx === 0 ? 'front' : 'back';
+      const posLabel  = idx === 0 ? 'Front — prints on TOP' : idx === 1 ? 'Back — prints BELOW' : `Card ${idx + 1}`;
+      const badgeCls  = idx === 0 ? 'front' : 'back';
+      const printHint = idx === 0 ? 'This card will appear on the top half of the A4 page.'
+                      : idx === 1 ? 'This card will appear on the bottom half of the A4 page.'
+                      : `Position ${idx + 1} on the A4 page.`;
 
       item.innerHTML = `
         <div class="card-item-header">
-          <span class="card-badge ${badgeCls}">${posLabel}</span>
+          <div>
+            <span class="card-badge ${badgeCls}">${posLabel}</span>
+            <div class="card-hint">${printHint}</div>
+          </div>
           <div class="card-actions">
-            <button title="Rotate left"  onclick="rotate(${idx}, -90)">↺</button>
-            <button title="Rotate right" onclick="rotate(${idx},  90)">↻</button>
+            <div class="action-group">
+              <div class="action-group-buttons">
+                <button title="Rotate left"  onclick="rotate(${idx}, -90)">↺</button>
+                <button title="Rotate right" onclick="rotate(${idx},  90)">↻</button>
+              </div>
+              <div class="action-group-label">Rotate</div>
+            </div>
             <div class="sep"></div>
-            <button title="Move up"   onclick="move(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-            <button title="Move down" onclick="move(${idx},  1)" ${idx === cards.length - 1 ? 'disabled' : ''}>↓</button>
+            <div class="action-group">
+              <div class="action-group-buttons">
+                <button title="Move up"   onclick="move(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                <button title="Move down" onclick="move(${idx},  1)" ${idx === cards.length - 1 ? 'disabled' : ''}>↓</button>
+              </div>
+              <div class="action-group-label">Reorder</div>
+            </div>
           </div>
         </div>
         <div class="card-thumb-wrap">
