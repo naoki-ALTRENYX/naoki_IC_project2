@@ -22,24 +22,58 @@
       color: #111;
     }
 
-    .card {
+    /* ---- outer card ---- */
+    .app-card {
       background: #fff;
       border-radius: 16px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-      padding: 36px 32px 28px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
       width: 100%;
-      max-width: 520px;
+      max-width: 960px;
+      overflow: hidden;
     }
 
-    .header { text-align: center; margin-bottom: 28px; }
-    .header h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.3px; }
-    .header p  { margin-top: 6px; font-size: 0.8rem; color: #888; letter-spacing: 0.2px; }
+    /* ---- header ---- */
+    .app-header {
+      padding: 22px 32px 18px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+    .app-header h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.3px; }
+    .app-header p  { font-size: 0.78rem; color: #9ca3af; }
+
+    /* ---- two-column body ---- */
+    .app-body {
+      display: flex;
+      min-height: 480px;
+    }
+
+    /* ---- LEFT panel ---- */
+    .left-panel {
+      width: 340px;
+      flex-shrink: 0;
+      padding: 24px;
+      border-right: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
 
     /* Drop zone */
     .dropzone {
-      border: 2px dashed #cbd5e0;
+      border: 2px dashed #d1d5db;
       border-radius: 12px;
-      padding: 36px 24px;
+      padding: 28px 16px;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.18s, background 0.18s;
@@ -47,118 +81,170 @@
     }
     .dropzone:hover, .dropzone.dragover { border-color: #1a56db; background: #f0f5ff; }
     .dropzone.disabled { pointer-events: none; opacity: 0.5; }
-    .dropzone svg { display: block; margin: 0 auto 14px; color: #9ca3af; }
-    .dropzone .dz-title { font-size: 0.95rem; font-weight: 500; color: #374151; line-height: 1.5; }
+    .dropzone svg { display: block; margin: 0 auto 12px; color: #9ca3af; }
+    .dropzone .dz-title { font-size: 0.85rem; font-weight: 500; color: #374151; line-height: 1.5; }
     .dropzone .dz-title span { color: #1a56db; text-decoration: underline; cursor: pointer; }
-    .dropzone .dz-sub { font-size: 0.75rem; color: #9ca3af; margin-top: 6px; }
+    .dropzone .dz-sub { font-size: 0.7rem; color: #9ca3af; margin-top: 5px; }
 
     #fileInput { display: none; }
 
     /* File pills */
-    #fileList { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    #fileList { display: flex; flex-direction: column; gap: 6px; }
     .pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: #f0f5ff; border: 1px solid #c7d7fc; border-radius: 999px;
-      padding: 4px 10px 4px 12px; font-size: 0.78rem; color: #1e40af; max-width: 220px;
+      display: flex; align-items: center; gap: 6px;
+      background: #f0f5ff; border: 1px solid #c7d7fc; border-radius: 8px;
+      padding: 6px 10px; font-size: 0.75rem; color: #1e40af;
     }
-    .pill span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pill span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pill button {
-      background: none; border: none; cursor: pointer; color: #6b7280;
-      padding: 0; line-height: 1; font-size: 1rem; display: flex; align-items: center;
-      transition: color 0.12s; flex-shrink: 0;
+      background: none; border: none; cursor: pointer; color: #93a3b8;
+      padding: 0; line-height: 1; font-size: 1rem; flex-shrink: 0;
+      transition: color 0.12s;
     }
     .pill button:hover { color: #ef4444; }
 
-    /* Preview section */
-    #previewSection { margin-top: 20px; display: none; }
-    .preview-label {
-      font-size: 0.75rem; font-weight: 600; color: #6b7280;
-      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px;
+    /* scan hint in left panel */
+    .scan-hint {
+      display: none;
+      font-size: 0.78rem;
+      color: #9ca3af;
+      align-items: center;
+      gap: 8px;
     }
-    .preview-hint {
-      font-size: 0.78rem; color: #9ca3af; margin-bottom: 14px; line-height: 1.6;
+    .scan-hint.show { display: flex; }
+
+    /* ---- RIGHT panel ---- */
+    .right-panel {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
     }
-    .preview-hint strong { color: #374151; }
+
+    /* empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #d1d5db;
+      gap: 10px;
+      text-align: center;
+    }
+    .empty-state svg { opacity: 0.4; }
+    .empty-state p { font-size: 0.82rem; }
+
+    /* card list */
+    #cardList { display: flex; flex-direction: column; gap: 10px; }
 
     .card-item {
       border: 1px solid #e5e7eb;
       border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
+      overflow: hidden;
+      display: flex;
       background: #fafafa;
     }
 
-    .card-item-header {
+    /* thumbnail column */
+    .card-thumb-col {
+      width: 200px;
+      flex-shrink: 0;
+      background: #f1f5f9;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
+      justify-content: center;
+      overflow: hidden;
+      min-height: 130px;
+    }
+    .card-thumb {
+      max-width: 188px;
+      max-height: 118px;
+      display: block;
+      border-radius: 4px;
+      transition: transform 0.25s ease;
     }
 
+    /* info + controls column */
+    .card-info-col {
+      flex: 1;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    .card-meta { margin-bottom: 10px; }
+
     .card-badge {
-      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px;
+      display: inline-block;
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.5px;
       padding: 3px 10px; border-radius: 999px; text-transform: uppercase;
+      margin-bottom: 4px;
     }
     .card-badge.front { background: #dbeafe; color: #1d4ed8; }
     .card-badge.back  { background: #f3f4f6; color: #6b7280; }
 
-    .card-hint {
-      font-size: 0.7rem; color: #9ca3af; margin-top: 3px;
+    .card-pos-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 2px;
     }
-    .card-actions { display: flex; gap: 8px; align-items: flex-start; }
-    .action-group { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-    .action-group > div:first-child,
-    .action-group > button { display: flex; }
-    .action-group { flex-direction: column; }
-    .action-group-buttons { display: flex; gap: 4px; }
-    .action-group-label {
-      font-size: 0.62rem; color: #9ca3af; text-align: center; letter-spacing: 0.3px;
+    .card-pos-hint {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      line-height: 1.4;
     }
-    .card-actions button {
-      width: 32px; height: 32px; border-radius: 8px;
-      border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
-      font-size: 1rem; display: flex; align-items: center; justify-content: center;
-      color: #374151; transition: background 0.12s, border-color 0.12s;
-    }
-    .card-actions button:hover { background: #f0f5ff; border-color: #1a56db; color: #1a56db; }
-    .card-actions button:disabled { opacity: 0.3; cursor: default; }
-    .card-actions .sep { width: 1px; background: #e5e7eb; margin: 0 2px; align-self: stretch; }
 
-    .card-thumb-wrap {
-      width: 100%;
-      height: 160px;
+    /* controls */
+    .card-controls {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f1f5f9;
-      border-radius: 8px;
-      overflow: hidden;
+      gap: 12px;
+      align-items: flex-end;
     }
-    .card-thumb {
-      max-width: 260px;
-      max-height: 148px;
-      border-radius: 4px;
-      display: block;
-      transition: transform 0.25s ease;
-    }
+    .ctrl-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .ctrl-group-btns { display: flex; gap: 4px; }
+    .ctrl-label { font-size: 0.6rem; color: #b0b0b0; letter-spacing: 0.3px; text-transform: uppercase; }
 
-    /* Scanning overlay */
-    #scanOverlay {
-      display: none;
-      margin-top: 20px;
-      text-align: center;
-      color: #6b7280;
-      font-size: 0.875rem;
+    .ctrl-btn {
+      width: 30px; height: 30px; border-radius: 7px;
+      border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
+      font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
+      color: #374151; transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .ctrl-btn:hover { background: #eff6ff; border-color: #1a56db; color: #1a56db; }
+    .ctrl-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+
+    .ctrl-sep { width: 1px; background: #e5e7eb; align-self: stretch; margin: 0 2px; }
+
+    /* ---- bottom bar (right panel) ---- */
+    .right-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
       gap: 10px;
-      align-items: center;
-      justify-content: center;
     }
-    #scanOverlay.show { display: flex; }
 
-    /* Convert button */
+    .preview-hint-bar {
+      font-size: 0.74rem;
+      color: #9ca3af;
+      line-height: 1.6;
+      padding: 10px 14px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #f0f0f0;
+      display: none;
+    }
+    .preview-hint-bar strong { color: #374151; }
+    .preview-hint-bar.show { display: block; }
+
     #convertBtn {
-      width: 100%; margin-top: 18px; padding: 13px;
-      font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
+      width: 100%; padding: 12px;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
       border: none; border-radius: 10px; cursor: pointer;
       background: #1a56db; color: #fff;
       display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -168,97 +254,124 @@
     #convertBtn:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
 
     .spinner {
-      width: 18px; height: 18px;
-      border: 2.5px solid rgba(255,255,255,0.35);
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
       border-top-color: #fff; border-radius: 50%;
       animation: spin 0.7s linear infinite; flex-shrink: 0;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Banners */
     .banner {
-      margin-top: 16px; border-radius: 10px; padding: 12px 16px;
-      font-size: 0.875rem; font-weight: 500; display: none;
-      align-items: flex-start; gap: 10px; line-height: 1.5;
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 0.82rem; font-weight: 500; display: none;
+      align-items: flex-start; gap: 8px; line-height: 1.5;
     }
     .banner.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
     .banner.error   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
     .banner.show    { display: flex; }
-    .banner-icon    { font-size: 1.1rem; flex-shrink: 0; }
+    .banner-icon    { flex-shrink: 0; }
 
+    /* ---- footer ---- */
     footer {
-      margin-top: 24px; font-size: 0.72rem; color: #b0b0b0;
+      margin-top: 16px; font-size: 0.68rem; color: #c0c0c0;
       text-align: center; letter-spacing: 0.3px;
     }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="header">
+<div class="app-card">
+
+  <!-- header -->
+  <div class="app-header">
     <h1>IC → A4 Converter</h1>
-    <p>MyKad &bull; ISO ID-1 &bull; 85.6 &times; 53.98 mm</p>
+    <p>MyKad &bull; ISO ID-1 &bull; 85.6 &times; 53.98 mm &bull; 300 DPI</p>
   </div>
 
-  <div class="dropzone" id="dropzone">
-    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24"
-         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="16 16 12 12 8 16"></polyline>
-      <line x1="12" y1="12" x2="12" y2="21"></line>
-      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
-    </svg>
-    <div class="dz-title">Drag &amp; drop IC files here<br />or <span id="browseLink">click to browse</span></div>
-    <div class="dz-sub">Supports PDF, JPG, PNG &mdash; front &amp; back detected automatically</div>
-  </div>
-  <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple />
+  <!-- body -->
+  <div class="app-body">
 
-  <div id="fileList"></div>
+    <!-- LEFT: upload -->
+    <div class="left-panel">
+      <div class="panel-label">Step 1 — Upload IC files</div>
 
-  <div id="scanOverlay">
-    <div class="spinner" style="border-top-color:#1a56db;border-color:rgba(0,0,0,0.1);border-top-color:#1a56db;"></div>
-    Detecting cards&hellip;
-  </div>
+      <div class="dropzone" id="dropzone">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 16 12 12 8 16"></polyline>
+          <line x1="12" y1="12" x2="12" y2="21"></line>
+          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+        </svg>
+        <div class="dz-title">Drag &amp; drop here<br/>or <span id="browseLink">click to browse</span></div>
+        <div class="dz-sub">PDF, JPG, PNG — multiple files OK</div>
+      </div>
+      <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple />
 
-  <div id="previewSection">
-    <div class="preview-label">Detected Cards</div>
-    <div class="preview-hint">
-      Card order here = print order on A4.<br/>
-      <strong>1st card prints on top · 2nd card prints below.</strong>
-      Use ↑↓ to swap, ↺↻ to fix rotation.
+      <div id="fileList"></div>
+
+      <div class="scan-hint" id="scanHint">
+        <div class="spinner" style="border-color:rgba(0,0,0,0.1);border-top-color:#1a56db;width:14px;height:14px;border-width:2px;"></div>
+        <span>Detecting cards&hellip;</span>
+      </div>
     </div>
-    <div id="cardList"></div>
-  </div>
 
-  <button id="convertBtn" disabled>Convert to A4 PDF</button>
+    <!-- RIGHT: preview + edit -->
+    <div class="right-panel">
+      <div class="panel-label">Step 2 — Review &amp; Edit Cards</div>
 
-  <div class="banner success" id="successBanner">
-    <span class="banner-icon">✓</span>
-    <span>Done! Your PDF is downloading&hellip;</span>
-  </div>
-  <div class="banner error" id="errorBanner">
-    <span class="banner-icon">✕</span>
-    <span id="errorMsg"></span>
-  </div>
-</div>
+      <!-- empty state -->
+      <div class="empty-state" id="emptyState">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 3h-8l-2 4h12z"></path>
+        </svg>
+        <p>Upload IC files on the left.<br/>Detected cards will appear here for review.</p>
+      </div>
 
-<footer>Print at 100% Actual Size &middot; Do not scale</footer>
+      <!-- card list -->
+      <div id="cardList"></div>
+
+      <!-- bottom bar -->
+      <div class="right-bottom">
+        <div class="preview-hint-bar" id="hintBar">
+          <strong>Print order:</strong> 1st card = top of A4 &nbsp;·&nbsp; 2nd card = bottom of A4.<br/>
+          Use <strong>↺ ↻</strong> to fix rotation &nbsp;·&nbsp; Use <strong>↑ ↓</strong> to swap front &amp; back.
+        </div>
+        <button id="convertBtn" disabled>Convert to A4 PDF</button>
+        <div class="banner success" id="successBanner">
+          <span class="banner-icon">✓</span>
+          <span>Done! Your PDF is downloading&hellip;</span>
+        </div>
+        <div class="banner error" id="errorBanner">
+          <span class="banner-icon">✕</span>
+          <span id="errorMsg"></span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end app-body -->
+</div><!-- end app-card -->
+
+<footer>Print at 100% Actual Size &middot; Do not scale to fit</footer>
 
 <script>
-  const dropzone      = document.getElementById('dropzone');
-  const fileInput     = document.getElementById('fileInput');
-  const browseLink    = document.getElementById('browseLink');
-  const fileList      = document.getElementById('fileList');
-  const convertBtn    = document.getElementById('convertBtn');
-  const scanOverlay   = document.getElementById('scanOverlay');
-  const previewSection= document.getElementById('previewSection');
-  const cardList      = document.getElementById('cardList');
-  const successBanner = document.getElementById('successBanner');
-  const errorBanner   = document.getElementById('errorBanner');
-  const errorMsg      = document.getElementById('errorMsg');
+  const dropzone       = document.getElementById('dropzone');
+  const fileInput      = document.getElementById('fileInput');
+  const browseLink     = document.getElementById('browseLink');
+  const fileList       = document.getElementById('fileList');
+  const scanHint       = document.getElementById('scanHint');
+  const emptyState     = document.getElementById('emptyState');
+  const cardList       = document.getElementById('cardList');
+  const hintBar        = document.getElementById('hintBar');
+  const convertBtn     = document.getElementById('convertBtn');
+  const successBanner  = document.getElementById('successBanner');
+  const errorBanner    = document.getElementById('errorBanner');
+  const errorMsg       = document.getElementById('errorMsg');
 
   let selectedFiles = [];
   let sessionId     = null;
-  let cards         = []; // [{id, image, rotation, is_front}]
+  let cards         = [];
 
   /* ---- file selection ---- */
   browseLink.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
@@ -279,7 +392,7 @@
     }
     renderPills();
     hideBanners();
-    if (selectedFiles.length) loadPreview();
+    if (selectedFiles.length) loadPreview(); else resetPreview();
   }
 
   function renderPills() {
@@ -303,7 +416,7 @@
   /* ---- preview fetch ---- */
   async function loadPreview() {
     resetPreview();
-    scanOverlay.classList.add('show');
+    scanHint.classList.add('show');
     dropzone.classList.add('disabled');
 
     const fd = new FormData();
@@ -319,65 +432,65 @@
       sessionId = data.session_id;
       cards = data.cards.map(c => ({ ...c, rotation: 0 }));
       renderCards();
-      previewSection.style.display = 'block';
+      emptyState.style.display = 'none';
+      hintBar.classList.add('show');
       convertBtn.disabled = false;
     } catch (err) {
       showError(err.message);
     } finally {
-      scanOverlay.classList.remove('show');
+      scanHint.classList.remove('show');
       dropzone.classList.remove('disabled');
     }
   }
 
-  /* ---- card preview rendering ---- */
-  function getThumbTransform(rot) {
+  /* ---- render card list ---- */
+  function thumbTransform(rot) {
     const r = ((rot % 360) + 360) % 360;
-    // scale down for portrait orientations so it fits the landscape-optimised box
-    return (r === 90 || r === 270)
-      ? `rotate(${r}deg) scale(0.62)`
-      : `rotate(${r}deg)`;
+    return (r === 90 || r === 270) ? `rotate(${r}deg) scale(0.6)` : `rotate(${r}deg)`;
   }
 
   function renderCards() {
     cardList.innerHTML = '';
     cards.forEach((c, idx) => {
+      const isFirst = idx === 0;
+      const badgeCls   = isFirst ? 'front' : 'back';
+      const badgeTxt   = isFirst ? 'Front' : 'Back';
+      const posTitle   = isFirst ? 'Prints on TOP of A4' : 'Prints on BOTTOM of A4';
+      const posHint    = isFirst
+        ? 'This is the top card on the printed page.'
+        : 'This is the bottom card on the printed page.';
+
       const item = document.createElement('div');
       item.className = 'card-item';
-
-      const posLabel  = idx === 0 ? 'Front — prints on TOP' : idx === 1 ? 'Back — prints BELOW' : `Card ${idx + 1}`;
-      const badgeCls  = idx === 0 ? 'front' : 'back';
-      const printHint = idx === 0 ? 'This card will appear on the top half of the A4 page.'
-                      : idx === 1 ? 'This card will appear on the bottom half of the A4 page.'
-                      : `Position ${idx + 1} on the A4 page.`;
-
       item.innerHTML = `
-        <div class="card-item-header">
-          <div>
-            <span class="card-badge ${badgeCls}">${posLabel}</span>
-            <div class="card-hint">${printHint}</div>
-          </div>
-          <div class="card-actions">
-            <div class="action-group">
-              <div class="action-group-buttons">
-                <button title="Rotate left"  onclick="rotate(${idx}, -90)">↺</button>
-                <button title="Rotate right" onclick="rotate(${idx},  90)">↻</button>
-              </div>
-              <div class="action-group-label">Rotate</div>
-            </div>
-            <div class="sep"></div>
-            <div class="action-group">
-              <div class="action-group-buttons">
-                <button title="Move up"   onclick="move(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-                <button title="Move down" onclick="move(${idx},  1)" ${idx === cards.length - 1 ? 'disabled' : ''}>↓</button>
-              </div>
-              <div class="action-group-label">Reorder</div>
-            </div>
-          </div>
-        </div>
-        <div class="card-thumb-wrap">
+        <div class="card-thumb-col">
           <img class="card-thumb"
                src="data:image/jpeg;base64,${c.image}"
-               style="transform:${getThumbTransform(c.rotation)}" />
+               style="transform:${thumbTransform(c.rotation)}" />
+        </div>
+        <div class="card-info-col">
+          <div class="card-meta">
+            <span class="card-badge ${badgeCls}">${badgeTxt}</span>
+            <div class="card-pos-title">${posTitle}</div>
+            <div class="card-pos-hint">${posHint}</div>
+          </div>
+          <div class="card-controls">
+            <div class="ctrl-group">
+              <div class="ctrl-group-btns">
+                <button class="ctrl-btn" title="Rotate Left"  onclick="rotate(${idx},-90)">↺</button>
+                <button class="ctrl-btn" title="Rotate Right" onclick="rotate(${idx}, 90)">↻</button>
+              </div>
+              <div class="ctrl-label">Rotate</div>
+            </div>
+            <div class="ctrl-sep"></div>
+            <div class="ctrl-group">
+              <div class="ctrl-group-btns">
+                <button class="ctrl-btn" title="Move Up"   onclick="move(${idx},-1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                <button class="ctrl-btn" title="Move Down" onclick="move(${idx}, 1)" ${idx === cards.length-1 ? 'disabled' : ''}>↓</button>
+              </div>
+              <div class="ctrl-label">Reorder</div>
+            </div>
+          </div>
         </div>
       `;
       cardList.appendChild(item);
@@ -411,18 +524,15 @@
           order: cards.map(c => ({ id: c.id, rotation: c.rotation }))
         })
       });
-
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
         throw new Error(j.detail || 'Conversion failed.');
       }
-
       const blob = await res.blob();
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
       a.href = url; a.download = 'ic_a4_output.pdf'; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 5000);
-
       successBanner.classList.add('show');
       setTimeout(reset, 3000);
     } catch (err) {
@@ -434,13 +544,10 @@
 
   /* ---- helpers ---- */
   function setConverting(on) {
-    if (on) {
-      convertBtn.disabled = true;
-      convertBtn.innerHTML = '<div class="spinner"></div>Processing&hellip;';
-    } else {
-      convertBtn.innerHTML = 'Convert to A4 PDF';
-      convertBtn.disabled = !sessionId;
-    }
+    convertBtn.disabled = on || !sessionId;
+    convertBtn.innerHTML = on
+      ? '<div class="spinner"></div>Processing&hellip;'
+      : 'Convert to A4 PDF';
   }
 
   function hideBanners() {
@@ -454,10 +561,10 @@
   }
 
   function resetPreview() {
-    sessionId = null;
-    cards = [];
+    sessionId = null; cards = [];
     cardList.innerHTML = '';
-    previewSection.style.display = 'none';
+    emptyState.style.display = '';
+    hintBar.classList.remove('show');
     convertBtn.disabled = true;
     convertBtn.innerHTML = 'Convert to A4 PDF';
   }
