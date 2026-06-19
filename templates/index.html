@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IC → A4 Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      color: #111;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 36px 32px 28px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .header { text-align: center; margin-bottom: 28px; }
+
+    .header h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #111;
+    }
+
+    .header p {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #888;
+      letter-spacing: 0.2px;
+    }
+
+    /* Drop zone */
+    .dropzone {
+      border: 2px dashed #cbd5e0;
+      border-radius: 12px;
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      position: relative;
+      user-select: none;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: #1a56db;
+      background: #f0f5ff;
+    }
+
+    .dropzone.disabled {
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    .dropzone svg {
+      display: block;
+      margin: 0 auto 14px;
+      color: #9ca3af;
+    }
+
+    .dropzone .dz-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #374151;
+      line-height: 1.5;
+    }
+
+    .dropzone .dz-title span {
+      color: #1a56db;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .dropzone .dz-sub {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 6px;
+    }
+
+    #fileInput { display: none; }
+
+    /* File pills */
+    #fileList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      min-height: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0f5ff;
+      border: 1px solid #c7d7fc;
+      border-radius: 999px;
+      padding: 4px 10px 4px 12px;
+      font-size: 0.78rem;
+      color: #1e40af;
+      max-width: 220px;
+    }
+
+    .pill span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pill button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0;
+      line-height: 1;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      transition: color 0.12s;
+    }
+
+    .pill button:hover { color: #ef4444; }
+
+    /* Convert button */
+    #convertBtn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 13px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #1a56db;
+      color: #fff;
+      transition: background 0.16s, opacity 0.16s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    #convertBtn:hover:not(:disabled) { background: #1447c0; }
+
+    #convertBtn:disabled {
+      background: #d1d5db;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Banners */
+    .banner {
+      margin-top: 16px;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+
+    .banner.success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .banner.error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .banner.show { display: flex; }
+
+    .banner-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* Footer */
+    footer {
+      margin-top: 24px;
+      font-size: 0.72rem;
+      color: #b0b0b0;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <h1>IC → A4 Converter</h1>
+    <p>MyKad &bull; ISO ID-1 &bull; 85.6 &times; 53.98 mm</p>
+  </div>
+
+  <div class="dropzone" id="dropzone">
+    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="16 16 12 12 8 16"></polyline>
+      <line x1="12" y1="12" x2="12" y2="21"></line>
+      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+    </svg>
+    <div class="dz-title">
+      Drag &amp; drop IC files here<br />
+      or <span id="browseLink">click to browse</span>
+    </div>
+    <div class="dz-sub">Supports PDF, JPG, PNG &mdash; front &amp; back detected automatically</div>
+  </div>
+
+  <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple />
+
+  <div id="fileList"></div>
+
+  <button id="convertBtn" disabled>Convert to A4 PDF</button>
+
+  <div class="banner success" id="successBanner">
+    <span class="banner-icon">✓</span>
+    <span>Done! Your PDF is downloading&hellip;</span>
+  </div>
+  <div class="banner error" id="errorBanner">
+    <span class="banner-icon">✕</span>
+    <span id="errorMsg"></span>
+  </div>
+</div>
+
+<footer>Print at 100% Actual Size &middot; Do not scale</footer>
+
+<script>
+  const dropzone    = document.getElementById('dropzone');
+  const fileInput   = document.getElementById('fileInput');
+  const browseLink  = document.getElementById('browseLink');
+  const fileList    = document.getElementById('fileList');
+  const convertBtn  = document.getElementById('convertBtn');
+  const successBanner = document.getElementById('successBanner');
+  const errorBanner   = document.getElementById('errorBanner');
+  const errorMsg      = document.getElementById('errorMsg');
+
+  let selectedFiles = [];
+
+  function syncUI() {
+    convertBtn.disabled = selectedFiles.length === 0;
+    fileList.innerHTML = '';
+    selectedFiles.forEach((f, i) => {
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.innerHTML = `<span title="${f.name}">${f.name}</span><button aria-label="Remove" data-idx="${i}">&times;</button>`;
+      fileList.appendChild(pill);
+    });
+    hideBanners();
+  }
+
+  function hideBanners() {
+    successBanner.classList.remove('show');
+    errorBanner.classList.remove('show');
+  }
+
+  function addFiles(newFiles) {
+    for (const f of newFiles) {
+      const ext = f.name.split('.').pop().toLowerCase();
+      if (!['pdf','jpg','jpeg','png'].includes(ext)) continue;
+      if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) {
+        selectedFiles.push(f);
+      }
+    }
+    syncUI();
+  }
+
+  fileList.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-idx]');
+    if (!btn) return;
+    selectedFiles.splice(parseInt(btn.dataset.idx), 1);
+    syncUI();
+  });
+
+  browseLink.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+  dropzone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', () => {
+    addFiles(fileInput.files);
+    fileInput.value = '';
+  });
+
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    addFiles(e.dataTransfer.files);
+  });
+
+  convertBtn.addEventListener('click', async () => {
+    if (!selectedFiles.length) return;
+    hideBanners();
+    setProcessing(true);
+
+    const fd = new FormData();
+    selectedFiles.forEach(f => fd.append('files', f));
+
+    try {
+      const res = await fetch('/upload', { method: 'POST', body: fd });
+      if (!res.ok) {
+        let detail = 'Conversion failed.';
+        try { detail = (await res.json()).detail || detail; } catch {}
+        throw new Error(detail);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ic_a4_output.pdf';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      successBanner.classList.add('show');
+    } catch (err) {
+      errorMsg.textContent = err.message;
+      errorBanner.classList.add('show');
+    } finally {
+      setProcessing(false);
+    }
+  });
+
+  function setProcessing(on) {
+    if (on) {
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<div class="spinner"></div>Processing…';
+      dropzone.classList.add('disabled');
+    } else {
+      convertBtn.innerHTML = 'Convert to A4 PDF';
+      convertBtn.disabled = selectedFiles.length === 0;
+      dropzone.classList.remove('disabled');
+    }
+  }
+</script>
+</body>
+</html>
