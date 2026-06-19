@@ -6,4 +6,3 @@ pillow
 numpy
 python-multipart
 jinja2
-rembg[cpu]

@@ -160,11 +160,22 @@ def build_a4(front, back):
     return canvas
 
 # ---- background removal (AI) ------------------------------------------------
+try:
+    from rembg import remove as _rembg_fn
+    REMBG_AVAILABLE = True
+except Exception:
+    _rembg_fn = None
+    REMBG_AVAILABLE = False
+
 def _remove_bg(img_bgr: np.ndarray) -> np.ndarray:
-    from rembg import remove as rembg_remove
+    if not REMBG_AVAILABLE:
+        raise HTTPException(
+            status_code=503,
+            detail="Background removal is not available on this server. Turn off the toggle and try again."
+        )
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     pil_in = Image.fromarray(img_rgb)
-    pil_out = rembg_remove(pil_in).convert("RGBA")
+    pil_out = _rembg_fn(pil_in).convert("RGBA")
     bg = Image.new("RGBA", pil_out.size, (255, 255, 255, 255))
     bg.paste(pil_out, mask=pil_out.split()[3])
     return cv2.cvtColor(np.array(bg.convert("RGB")), cv2.COLOR_RGB2BGR)
