@@ -145,11 +145,14 @@
     .toggle-text { flex: 1; min-width: 0; }
     .toggle-title { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray-900); }
     .toggle-desc  { display: block; font-size: 0.7rem; color: var(--gray-600); margin-top: 2px; line-height: 1.5; }
-    .bg-tips { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
-    .bg-tip-row { display: flex; align-items: flex-start; gap: 7px; font-size: 0.68rem; line-height: 1.4; padding: 5px 8px; border-radius: 6px; }
-    .bg-tip-row.good { background: var(--green-soft); color: #166534; }
-    .bg-tip-row.bad  { background: var(--red-soft);   color: #991b1b; }
-    .tip-icon { flex-shrink: 0; font-size: 0.65rem; font-weight: 700; margin-top: 1px; }
+    .bg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+    .bg-col-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
+    .bg-col-label.good { color: #16a34a; }
+    .bg-col-label.bad  { color: #dc2626; }
+    .bg-chip { display: flex; align-items: center; gap: 5px; padding: 5px 7px; border-radius: 7px; font-size: 0.67rem; font-weight: 500; margin-bottom: 4px; }
+    .bg-chip.good { background: var(--green-soft); color: #166534; border: 1px solid var(--green-mid); }
+    .bg-chip.bad  { background: var(--red-soft);   color: #991b1b; border: 1px solid var(--red-mid); }
+    .bg-chip-icon { font-size: 0.9rem; flex-shrink: 0; }
 
     /* Dropzone */
     .dropzone {
@@ -475,27 +478,18 @@
             </div>
             <div class="toggle-text">
               <span class="toggle-title">Remove Background</span>
-              <span class="toggle-desc">Cleans up the surface behind your IC so only the card appears on white.
-                <span class="bg-tips">
-                  <span class="bg-tip-row good">
-                    <span class="tip-icon">✓</span>
-                    <span><b>Plain surface</b> — table, paper, folder (any solid colour)</span>
+              <span class="toggle-desc">Makes the IC appear on a clean white background.
+                <span class="bg-grid">
+                  <span>
+                    <div class="bg-col-label good">Works best</div>
+                    <div class="bg-chip good"><span class="bg-chip-icon">📄</span> Plain surface</div>
+                    <div class="bg-chip good"><span class="bg-chip-icon">☀️</span> Good lighting</div>
+                    <div class="bg-chip good"><span class="bg-chip-icon">🪪</span> Card fills frame</div>
                   </span>
-                  <span class="bg-tip-row good">
-                    <span class="tip-icon">✓</span>
-                    <span><b>Even lighting</b> — no harsh shadows across the card</span>
-                  </span>
-                  <span class="bg-tip-row good">
-                    <span class="tip-icon">✓</span>
-                    <span><b>IC fills the frame</b> — card takes up most of the photo</span>
-                  </span>
-                  <span class="bg-tip-row bad">
-                    <span class="tip-icon">✕</span>
-                    <span><b>Busy/patterned backgrounds</b> — results may be uneven</span>
-                  </span>
-                  <span class="bg-tip-row bad">
-                    <span class="tip-icon">✕</span>
-                    <span><b>Very dark surfaces or strong shadows</b> — slower &amp; less accurate</span>
+                  <span>
+                    <div class="bg-col-label bad">Avoid</div>
+                    <div class="bg-chip bad"><span class="bg-chip-icon">🌀</span> Busy background</div>
+                    <div class="bg-chip bad"><span class="bg-chip-icon">🌑</span> Dark / shadows</div>
                   </span>
                 </span>
               </span>
