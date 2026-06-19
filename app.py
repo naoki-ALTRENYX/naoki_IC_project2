@@ -6,7 +6,7 @@ import uuid
 import numpy as np
 import cv2
 from PIL import Image
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Request, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks, Request, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
@@ -159,6 +159,17 @@ def build_a4(front, back):
         place(canvas, back, cx, top + CARD_H + gap + CARD_H // 2)
     return canvas
 
+# ---- background removal (AI) ------------------------------------------------
+def _remove_bg(img_bgr: np.ndarray) -> np.ndarray:
+    from rembg import remove as rembg_remove
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    pil_in = Image.fromarray(img_rgb)
+    pil_out = rembg_remove(pil_in).convert("RGBA")
+    bg = Image.new("RGBA", pil_out.size, (255, 255, 255, 255))
+    bg.paste(pil_out, mask=pil_out.split()[3])
+    return cv2.cvtColor(np.array(bg.convert("RGB")), cv2.COLOR_RGB2BGR)
+
+
 # ---- orientation & front/back detection -------------------------------------
 _face_cascade = None
 
@@ -292,7 +303,7 @@ async def upload(background_tasks: BackgroundTasks, files: list[UploadFile] = Fi
 
 
 @app.post("/preview")
-async def preview(files: list[UploadFile] = File(...)):
+async def preview(files: list[UploadFile] = File(...), remove_bg: bool = Form(False)):
     _prune_sessions()
     tmp_inputs = []
     try:
@@ -306,6 +317,8 @@ async def preview(files: list[UploadFile] = File(...)):
         raw_cards = []
         for path in tmp_inputs:
             for page in load_pages(path):
+                if remove_bg:
+                    page = _remove_bg(page)
                 raw_cards.extend(cards_from_image(page))
 
         if not raw_cards:
