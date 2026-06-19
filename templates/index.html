@@ -146,6 +146,7 @@
       overflow: hidden;
       display: flex;
       background: #fafafa;
+      position: relative;
     }
 
     /* thumbnail column */
@@ -187,6 +188,16 @@
     }
     .card-badge.front { background: #dbeafe; color: #1d4ed8; }
     .card-badge.back  { background: #f3f4f6; color: #6b7280; }
+
+    .card-delete-btn {
+      position: absolute; top: 10px; right: 10px;
+      width: 26px; height: 26px; border-radius: 6px;
+      border: 1px solid #fecaca; background: #fef2f2; cursor: pointer;
+      font-size: 0.8rem; color: #ef4444;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .card-delete-btn:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
 
     .card-pos-title {
       font-size: 0.82rem;
@@ -463,6 +474,7 @@
       const item = document.createElement('div');
       item.className = 'card-item';
       item.innerHTML = `
+        <button class="card-delete-btn" title="Remove this card" onclick="deleteCard(${idx})">✕</button>
         <div class="card-thumb-col">
           <img class="card-thumb"
                src="data:image/jpeg;base64,${c.image}"
@@ -507,6 +519,15 @@
     if (ni < 0 || ni >= cards.length) return;
     [cards[idx], cards[ni]] = [cards[ni], cards[idx]];
     renderCards();
+  }
+
+  function deleteCard(idx) {
+    cards.splice(idx, 1);
+    if (cards.length === 0) {
+      resetPreview();
+    } else {
+      renderCards();
+    }
   }
 
   /* ---- convert ---- */
