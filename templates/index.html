@@ -144,7 +144,12 @@
     .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(16px); }
     .toggle-text { flex: 1; min-width: 0; }
     .toggle-title { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray-900); }
-    .toggle-desc  { display: block; font-size: 0.7rem; color: var(--gray-400); margin-top: 2px; line-height: 1.4; }
+    .toggle-desc  { display: block; font-size: 0.7rem; color: var(--gray-600); margin-top: 2px; line-height: 1.5; }
+    .bg-tips { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+    .bg-tip-row { display: flex; align-items: flex-start; gap: 7px; font-size: 0.68rem; line-height: 1.4; padding: 5px 8px; border-radius: 6px; }
+    .bg-tip-row.good { background: var(--green-soft); color: #166534; }
+    .bg-tip-row.bad  { background: var(--red-soft);   color: #991b1b; }
+    .tip-icon { flex-shrink: 0; font-size: 0.65rem; font-weight: 700; margin-top: 1px; }
 
     /* Dropzone */
     .dropzone {
@@ -470,9 +475,30 @@
             </div>
             <div class="toggle-text">
               <span class="toggle-title">Remove Background</span>
-              <span class="toggle-desc">Removes the surface behind your IC so only the card appears on white.<br>
-                <b>Best results:</b> plain single-colour surface (table, paper, folder), good even lighting, IC filling most of the frame.<br>
-                <span style="color:var(--red)">Avoid:</span> busy/patterned backgrounds, shadows across the card, or very dark surfaces — output may be uneven and slower.</span>
+              <span class="toggle-desc">Cleans up the surface behind your IC so only the card appears on white.
+                <span class="bg-tips">
+                  <span class="bg-tip-row good">
+                    <span class="tip-icon">✓</span>
+                    <span><b>Plain surface</b> — table, paper, folder (any solid colour)</span>
+                  </span>
+                  <span class="bg-tip-row good">
+                    <span class="tip-icon">✓</span>
+                    <span><b>Even lighting</b> — no harsh shadows across the card</span>
+                  </span>
+                  <span class="bg-tip-row good">
+                    <span class="tip-icon">✓</span>
+                    <span><b>IC fills the frame</b> — card takes up most of the photo</span>
+                  </span>
+                  <span class="bg-tip-row bad">
+                    <span class="tip-icon">✕</span>
+                    <span><b>Busy/patterned backgrounds</b> — results may be uneven</span>
+                  </span>
+                  <span class="bg-tip-row bad">
+                    <span class="tip-icon">✕</span>
+                    <span><b>Very dark surfaces or strong shadows</b> — slower &amp; less accurate</span>
+                  </span>
+                </span>
+              </span>
             </div>
           </label>
 
