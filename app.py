@@ -1,10 +1,13 @@
 import os
 import tempfile
+import base64
+import time
+import uuid
 import numpy as np
 import cv2
 from PIL import Image
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Request, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
 # ---- constants ---------------------------------------------------------------
@@ -225,6 +228,21 @@ def process_files(paths):
 app = FastAPI(title="IC → A4 Converter")
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 
+# in-memory session store: session_id -> {cards: [np.ndarray], created: float}
+_sessions: dict = {}
+
+def _prune_sessions():
+    cutoff = time.time() - 600  # 10-min TTL
+    expired = [k for k, v in _sessions.items() if v["created"] < cutoff]
+    for k in expired:
+        del _sessions[k]
+
+def _card_to_b64(card: np.ndarray) -> str:
+    _, buf = cv2.imencode(".jpg", card, [cv2.IMWRITE_JPEG_QUALITY, 88])
+    return base64.b64encode(buf).decode()
+
+_ROTATE = {90: cv2.ROTATE_90_CLOCKWISE, 180: cv2.ROTATE_180, 270: cv2.ROTATE_90_COUNTERCLOCKWISE}
+
 
 @app.get("/")
 async def index(request: Request):
@@ -271,3 +289,93 @@ async def upload(background_tasks: BackgroundTasks, files: list[UploadFile] = Fi
         media_type="application/pdf",
         filename="ic_a4_output.pdf",
     )
+
+
+@app.post("/preview")
+async def preview(files: list[UploadFile] = File(...)):
+    _prune_sessions()
+    tmp_inputs = []
+    try:
+        for f in files:
+            suffix = os.path.splitext(f.filename or "")[1].lower() or ".bin"
+            tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+            tmp.write(await f.read())
+            tmp.close()
+            tmp_inputs.append(tmp.name)
+
+        raw_cards = []
+        for path in tmp_inputs:
+            for page in load_pages(path):
+                raw_cards.extend(cards_from_image(page))
+
+        if not raw_cards:
+            raise HTTPException(status_code=422, detail="No IC cards detected.")
+
+        fronts, backs = [], []
+        for card in raw_cards:
+            is_front, oriented = orient_and_classify(card)
+            (fronts if is_front else backs).append((oriented, is_front))
+
+        ordered = []
+        for i in range(max(len(fronts), len(backs))):
+            if i < len(fronts): ordered.append(fronts[i])
+            if i < len(backs):  ordered.append(backs[i])
+
+        session_id = str(uuid.uuid4())
+        _sessions[session_id] = {
+            "cards": [c for c, _ in ordered],
+            "created": time.time(),
+        }
+
+        card_data = [
+            {"id": i, "image": _card_to_b64(card), "is_front": is_front}
+            for i, (card, is_front) in enumerate(ordered)
+        ]
+        return JSONResponse({"session_id": session_id, "cards": card_data})
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+    finally:
+        for p in tmp_inputs:
+            try: os.unlink(p)
+            except OSError: pass
+
+
+@app.post("/convert")
+async def convert(background_tasks: BackgroundTasks, request: Request):
+    body = await request.json()
+    session_id = body.get("session_id", "")
+    order = body.get("order", [])  # [{id, rotation}, ...]
+
+    if session_id not in _sessions:
+        raise HTTPException(status_code=404, detail="Session expired — please re-upload your files.")
+
+    stored = _sessions[session_id]["cards"]
+    cards = []
+    for item in order:
+        card = stored[item["id"]].copy()
+        rot = int(item.get("rotation", 0)) % 360
+        if rot in _ROTATE:
+            card = cv2.rotate(card, _ROTATE[rot])
+        cards.append(card)
+
+    pages = []
+    for i in range(0, len(cards), 2):
+        front = cards[i]
+        back = cards[i + 1] if i + 1 < len(cards) else None
+        pages.append(build_a4(front, back))
+
+    pil = [Image.fromarray(cv2.cvtColor(p, cv2.COLOR_BGR2RGB)) for p in pages]
+    out = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+    out.close()
+    pil[0].save(out.name, "PDF", resolution=DPI, save_all=True, append_images=pil[1:])
+
+    def cleanup():
+        try: os.unlink(out.name)
+        except OSError: pass
+        _sessions.pop(session_id, None)
+
+    background_tasks.add_task(cleanup)
+    return FileResponse(out.name, media_type="application/pdf", filename="ic_a4_output.pdf")

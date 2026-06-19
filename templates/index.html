@@ -32,20 +32,8 @@
     }
 
     .header { text-align: center; margin-bottom: 28px; }
-
-    .header h1 {
-      font-size: 1.6rem;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: #111;
-    }
-
-    .header p {
-      margin-top: 6px;
-      font-size: 0.8rem;
-      color: #888;
-      letter-spacing: 0.2px;
-    }
+    .header h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.3px; }
+    .header p  { margin-top: 6px; font-size: 0.8rem; color: #888; letter-spacing: 0.2px; }
 
     /* Drop zone */
     .dropzone {
@@ -55,168 +43,137 @@
       text-align: center;
       cursor: pointer;
       transition: border-color 0.18s, background 0.18s;
-      position: relative;
       user-select: none;
     }
-
-    .dropzone:hover, .dropzone.dragover {
-      border-color: #1a56db;
-      background: #f0f5ff;
-    }
-
-    .dropzone.disabled {
-      pointer-events: none;
-      opacity: 0.55;
-    }
-
-    .dropzone svg {
-      display: block;
-      margin: 0 auto 14px;
-      color: #9ca3af;
-    }
-
-    .dropzone .dz-title {
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: #374151;
-      line-height: 1.5;
-    }
-
-    .dropzone .dz-title span {
-      color: #1a56db;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .dropzone .dz-sub {
-      font-size: 0.75rem;
-      color: #9ca3af;
-      margin-top: 6px;
-    }
+    .dropzone:hover, .dropzone.dragover { border-color: #1a56db; background: #f0f5ff; }
+    .dropzone.disabled { pointer-events: none; opacity: 0.5; }
+    .dropzone svg { display: block; margin: 0 auto 14px; color: #9ca3af; }
+    .dropzone .dz-title { font-size: 0.95rem; font-weight: 500; color: #374151; line-height: 1.5; }
+    .dropzone .dz-title span { color: #1a56db; text-decoration: underline; cursor: pointer; }
+    .dropzone .dz-sub { font-size: 0.75rem; color: #9ca3af; margin-top: 6px; }
 
     #fileInput { display: none; }
 
     /* File pills */
-    #fileList {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 14px;
-      min-height: 0;
-    }
-
+    #fileList { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
     .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #f0f5ff;
-      border: 1px solid #c7d7fc;
-      border-radius: 999px;
-      padding: 4px 10px 4px 12px;
-      font-size: 0.78rem;
-      color: #1e40af;
-      max-width: 220px;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f0f5ff; border: 1px solid #c7d7fc; border-radius: 999px;
+      padding: 4px 10px 4px 12px; font-size: 0.78rem; color: #1e40af; max-width: 220px;
     }
-
-    .pill span {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
+    .pill span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pill button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #6b7280;
-      padding: 0;
-      line-height: 1;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      transition: color 0.12s;
+      background: none; border: none; cursor: pointer; color: #6b7280;
+      padding: 0; line-height: 1; font-size: 1rem; display: flex; align-items: center;
+      transition: color 0.12s; flex-shrink: 0;
     }
-
     .pill button:hover { color: #ef4444; }
 
-    /* Convert button */
-    #convertBtn {
+    /* Preview section */
+    #previewSection { margin-top: 20px; display: none; }
+    .preview-label {
+      font-size: 0.75rem; font-weight: 600; color: #6b7280;
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px;
+    }
+
+    .card-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      background: #fafafa;
+    }
+
+    .card-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .card-badge {
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.5px;
+      padding: 3px 10px; border-radius: 999px; text-transform: uppercase;
+    }
+    .card-badge.front { background: #dbeafe; color: #1d4ed8; }
+    .card-badge.back  { background: #f3f4f6; color: #6b7280; }
+
+    .card-actions { display: flex; gap: 6px; }
+    .card-actions button {
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      color: #374151; transition: background 0.12s, border-color 0.12s;
+    }
+    .card-actions button:hover { background: #f0f5ff; border-color: #1a56db; color: #1a56db; }
+    .card-actions button:disabled { opacity: 0.3; cursor: default; }
+    .card-actions .sep { width: 1px; background: #e5e7eb; margin: 4px 2px; }
+
+    .card-thumb-wrap {
       width: 100%;
-      margin-top: 20px;
-      padding: 13px;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background: #1a56db;
-      color: #fff;
-      transition: background 0.16s, opacity 0.16s;
+      height: 160px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #f1f5f9;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .card-thumb {
+      max-width: 260px;
+      max-height: 148px;
+      border-radius: 4px;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+
+    /* Scanning overlay */
+    #scanOverlay {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.875rem;
       gap: 10px;
+      align-items: center;
+      justify-content: center;
     }
+    #scanOverlay.show { display: flex; }
 
+    /* Convert button */
+    #convertBtn {
+      width: 100%; margin-top: 18px; padding: 13px;
+      font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
+      border: none; border-radius: 10px; cursor: pointer;
+      background: #1a56db; color: #fff;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background 0.16s;
+    }
     #convertBtn:hover:not(:disabled) { background: #1447c0; }
+    #convertBtn:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
 
-    #convertBtn:disabled {
-      background: #d1d5db;
-      color: #9ca3af;
-      cursor: not-allowed;
-    }
-
-    /* Spinner */
     .spinner {
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       border: 2.5px solid rgba(255,255,255,0.35);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      flex-shrink: 0;
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite; flex-shrink: 0;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Banners */
     .banner {
-      margin-top: 16px;
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      display: none;
-      align-items: flex-start;
-      gap: 10px;
-      line-height: 1.5;
+      margin-top: 16px; border-radius: 10px; padding: 12px 16px;
+      font-size: 0.875rem; font-weight: 500; display: none;
+      align-items: flex-start; gap: 10px; line-height: 1.5;
     }
+    .banner.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .banner.error   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .banner.show    { display: flex; }
+    .banner-icon    { font-size: 1.1rem; flex-shrink: 0; }
 
-    .banner.success {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      color: #166534;
-    }
-
-    .banner.error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-    }
-
-    .banner.show { display: flex; }
-
-    .banner-icon { font-size: 1.1rem; flex-shrink: 0; }
-
-    /* Footer */
     footer {
-      margin-top: 24px;
-      font-size: 0.72rem;
-      color: #b0b0b0;
-      text-align: center;
-      letter-spacing: 0.3px;
+      margin-top: 24px; font-size: 0.72rem; color: #b0b0b0;
+      text-align: center; letter-spacing: 0.3px;
     }
   </style>
 </head>
@@ -235,16 +192,22 @@
       <line x1="12" y1="12" x2="12" y2="21"></line>
       <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
     </svg>
-    <div class="dz-title">
-      Drag &amp; drop IC files here<br />
-      or <span id="browseLink">click to browse</span>
-    </div>
+    <div class="dz-title">Drag &amp; drop IC files here<br />or <span id="browseLink">click to browse</span></div>
     <div class="dz-sub">Supports PDF, JPG, PNG &mdash; front &amp; back detected automatically</div>
   </div>
-
   <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple />
 
   <div id="fileList"></div>
+
+  <div id="scanOverlay">
+    <div class="spinner" style="border-top-color:#1a56db;border-color:rgba(0,0,0,0.1);border-top-color:#1a56db;"></div>
+    Detecting cards&hellip;
+  </div>
+
+  <div id="previewSection">
+    <div class="preview-label">Detected Cards — adjust rotation or order before converting</div>
+    <div id="cardList"></div>
+  </div>
 
   <button id="convertBtn" disabled>Convert to A4 PDF</button>
 
@@ -261,27 +224,187 @@
 <footer>Print at 100% Actual Size &middot; Do not scale</footer>
 
 <script>
-  const dropzone    = document.getElementById('dropzone');
-  const fileInput   = document.getElementById('fileInput');
-  const browseLink  = document.getElementById('browseLink');
-  const fileList    = document.getElementById('fileList');
-  const convertBtn  = document.getElementById('convertBtn');
+  const dropzone      = document.getElementById('dropzone');
+  const fileInput     = document.getElementById('fileInput');
+  const browseLink    = document.getElementById('browseLink');
+  const fileList      = document.getElementById('fileList');
+  const convertBtn    = document.getElementById('convertBtn');
+  const scanOverlay   = document.getElementById('scanOverlay');
+  const previewSection= document.getElementById('previewSection');
+  const cardList      = document.getElementById('cardList');
   const successBanner = document.getElementById('successBanner');
   const errorBanner   = document.getElementById('errorBanner');
   const errorMsg      = document.getElementById('errorMsg');
 
   let selectedFiles = [];
+  let sessionId     = null;
+  let cards         = []; // [{id, image, rotation, is_front}]
 
-  function syncUI() {
-    convertBtn.disabled = selectedFiles.length === 0;
+  /* ---- file selection ---- */
+  browseLink.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault(); dropzone.classList.remove('dragover'); addFiles(e.dataTransfer.files);
+  });
+
+  function addFiles(newFiles) {
+    for (const f of newFiles) {
+      const ext = f.name.split('.').pop().toLowerCase();
+      if (!['pdf','jpg','jpeg','png'].includes(ext)) continue;
+      if (!selectedFiles.find(x => x.name === f.name && x.size === f.size))
+        selectedFiles.push(f);
+    }
+    renderPills();
+    hideBanners();
+    if (selectedFiles.length) loadPreview();
+  }
+
+  function renderPills() {
     fileList.innerHTML = '';
     selectedFiles.forEach((f, i) => {
       const pill = document.createElement('div');
       pill.className = 'pill';
-      pill.innerHTML = `<span title="${f.name}">${f.name}</span><button aria-label="Remove" data-idx="${i}">&times;</button>`;
+      pill.innerHTML = `<span title="${f.name}">${f.name}</span><button data-idx="${i}">&times;</button>`;
       fileList.appendChild(pill);
     });
+  }
+
+  fileList.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-idx]');
+    if (!btn) return;
+    selectedFiles.splice(parseInt(btn.dataset.idx), 1);
+    renderPills();
+    if (selectedFiles.length) loadPreview(); else resetPreview();
+  });
+
+  /* ---- preview fetch ---- */
+  async function loadPreview() {
+    resetPreview();
+    scanOverlay.classList.add('show');
+    dropzone.classList.add('disabled');
+
+    const fd = new FormData();
+    selectedFiles.forEach(f => fd.append('files', f));
+
+    try {
+      const res = await fetch('/preview', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.detail || 'Detection failed.');
+      }
+      const data = await res.json();
+      sessionId = data.session_id;
+      cards = data.cards.map(c => ({ ...c, rotation: 0 }));
+      renderCards();
+      previewSection.style.display = 'block';
+      convertBtn.disabled = false;
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      scanOverlay.classList.remove('show');
+      dropzone.classList.remove('disabled');
+    }
+  }
+
+  /* ---- card preview rendering ---- */
+  function getThumbTransform(rot) {
+    const r = ((rot % 360) + 360) % 360;
+    // scale down for portrait orientations so it fits the landscape-optimised box
+    return (r === 90 || r === 270)
+      ? `rotate(${r}deg) scale(0.62)`
+      : `rotate(${r}deg)`;
+  }
+
+  function renderCards() {
+    cardList.innerHTML = '';
+    cards.forEach((c, idx) => {
+      const item = document.createElement('div');
+      item.className = 'card-item';
+
+      const posLabel = idx === 0 ? 'Front' : idx === 1 ? 'Back' : `Card ${idx + 1}`;
+      const badgeCls = idx === 0 ? 'front' : 'back';
+
+      item.innerHTML = `
+        <div class="card-item-header">
+          <span class="card-badge ${badgeCls}">${posLabel}</span>
+          <div class="card-actions">
+            <button title="Rotate left"  onclick="rotate(${idx}, -90)">↺</button>
+            <button title="Rotate right" onclick="rotate(${idx},  90)">↻</button>
+            <div class="sep"></div>
+            <button title="Move up"   onclick="move(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
+            <button title="Move down" onclick="move(${idx},  1)" ${idx === cards.length - 1 ? 'disabled' : ''}>↓</button>
+          </div>
+        </div>
+        <div class="card-thumb-wrap">
+          <img class="card-thumb"
+               src="data:image/jpeg;base64,${c.image}"
+               style="transform:${getThumbTransform(c.rotation)}" />
+        </div>
+      `;
+      cardList.appendChild(item);
+    });
+  }
+
+  function rotate(idx, deg) {
+    cards[idx].rotation = (cards[idx].rotation + deg + 360) % 360;
+    renderCards();
+  }
+
+  function move(idx, dir) {
+    const ni = idx + dir;
+    if (ni < 0 || ni >= cards.length) return;
+    [cards[idx], cards[ni]] = [cards[ni], cards[idx]];
+    renderCards();
+  }
+
+  /* ---- convert ---- */
+  convertBtn.addEventListener('click', async () => {
+    if (!sessionId || !cards.length) return;
     hideBanners();
+    setConverting(true);
+
+    try {
+      const res = await fetch('/convert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          order: cards.map(c => ({ id: c.id, rotation: c.rotation }))
+        })
+      });
+
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.detail || 'Conversion failed.');
+      }
+
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = 'ic_a4_output.pdf'; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+      successBanner.classList.add('show');
+      setTimeout(reset, 3000);
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      setConverting(false);
+    }
+  });
+
+  /* ---- helpers ---- */
+  function setConverting(on) {
+    if (on) {
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<div class="spinner"></div>Processing&hellip;';
+    } else {
+      convertBtn.innerHTML = 'Convert to A4 PDF';
+      convertBtn.disabled = !sessionId;
+    }
   }
 
   function hideBanners() {
@@ -289,91 +412,26 @@
     errorBanner.classList.remove('show');
   }
 
-  function addFiles(newFiles) {
-    for (const f of newFiles) {
-      const ext = f.name.split('.').pop().toLowerCase();
-      if (!['pdf','jpg','jpeg','png'].includes(ext)) continue;
-      if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) {
-        selectedFiles.push(f);
-      }
-    }
-    syncUI();
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorBanner.classList.add('show');
   }
 
-  fileList.addEventListener('click', e => {
-    const btn = e.target.closest('button[data-idx]');
-    if (!btn) return;
-    selectedFiles.splice(parseInt(btn.dataset.idx), 1);
-    syncUI();
-  });
-
-  browseLink.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
-  dropzone.addEventListener('click', () => fileInput.click());
-
-  fileInput.addEventListener('change', () => {
-    addFiles(fileInput.files);
-    fileInput.value = '';
-  });
-
-  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-  dropzone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    addFiles(e.dataTransfer.files);
-  });
-
-  convertBtn.addEventListener('click', async () => {
-    if (!selectedFiles.length) return;
-    hideBanners();
-    setProcessing(true);
-
-    const fd = new FormData();
-    selectedFiles.forEach(f => fd.append('files', f));
-
-    try {
-      const res = await fetch('/upload', { method: 'POST', body: fd });
-      if (!res.ok) {
-        let detail = 'Conversion failed.';
-        try { detail = (await res.json()).detail || detail; } catch {}
-        throw new Error(detail);
-      }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'ic_a4_output.pdf';
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-      successBanner.classList.add('show');
-      setTimeout(reset, 3000);
-    } catch (err) {
-      errorMsg.textContent = err.message;
-      errorBanner.classList.add('show');
-    } finally {
-      setProcessing(false);
-    }
-  });
+  function resetPreview() {
+    sessionId = null;
+    cards = [];
+    cardList.innerHTML = '';
+    previewSection.style.display = 'none';
+    convertBtn.disabled = true;
+    convertBtn.innerHTML = 'Convert to A4 PDF';
+  }
 
   function reset() {
     selectedFiles = [];
     fileList.innerHTML = '';
-    convertBtn.disabled = true;
-    convertBtn.innerHTML = 'Convert to A4 PDF';
-    hideBanners();
     fileInput.value = '';
-  }
-
-  function setProcessing(on) {
-    if (on) {
-      convertBtn.disabled = true;
-      convertBtn.innerHTML = '<div class="spinner"></div>Processing…';
-      dropzone.classList.add('disabled');
-    } else {
-      convertBtn.innerHTML = 'Convert to A4 PDF';
-      convertBtn.disabled = selectedFiles.length === 0;
-      dropzone.classList.remove('disabled');
-    }
+    hideBanners();
+    resetPreview();
   }
 </script>
 </body>
