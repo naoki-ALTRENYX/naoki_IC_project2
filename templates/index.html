@@ -6,438 +6,614 @@
   <title>IC → A4 Converter</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --blue:      #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-soft: #eff6ff;
+      --blue-mid:  #bfdbfe;
+      --green:     #16a34a;
+      --green-soft:#f0fdf4;
+      --green-mid: #bbf7d0;
+      --red:       #dc2626;
+      --red-soft:  #fef2f2;
+      --red-mid:   #fecaca;
+      --gray-50:   #f9fafb;
+      --gray-100:  #f3f4f6;
+      --gray-200:  #e5e7eb;
+      --gray-400:  #9ca3af;
+      --gray-600:  #4b5563;
+      --gray-900:  #111827;
+      --radius:    14px;
+      --shadow:    0 4px 24px rgba(0,0,0,0.07);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #f5f5f5;
+      background: #f0f2f5;
       min-height: 100vh;
+      color: var(--gray-900);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      color: #111;
     }
 
-    /* ---- outer card ---- */
-    .app-card {
+    /* ── TOP NAV ── */
+    .topnav {
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
-      width: 100%;
-      max-width: 960px;
-      overflow: hidden;
-    }
-
-    /* ---- header ---- */
-    .app-header {
-      padding: 22px 32px 18px;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 32px;
+      height: 56px;
       display: flex;
-      align-items: baseline;
-      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
-    .app-header h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.3px; }
-    .app-header p  { font-size: 0.78rem; color: #9ca3af; }
-
-    /* ---- two-column body ---- */
-    .app-body {
-      display: flex;
-      min-height: 480px;
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo {
+      width: 32px; height: 32px; background: var(--blue);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
     }
-
-    /* ---- LEFT panel ---- */
-    .left-panel {
-      width: 340px;
-      flex-shrink: 0;
-      padding: 24px;
-      border-right: 1px solid #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .nav-logo svg { color: #fff; }
+    .nav-title { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); letter-spacing: -0.3px; }
+    .nav-title span { color: var(--blue); }
+    .nav-badge {
+      font-size: 0.62rem; font-weight: 600; background: var(--blue-soft);
+      color: var(--blue); border-radius: 999px; padding: 2px 8px;
+      border: 1px solid var(--blue-mid); letter-spacing: 0.4px;
     }
 
-    .panel-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-      color: #9ca3af;
-      margin-bottom: 2px;
-    }
-
-    /* Drop zone */
-    .dropzone {
-      border: 2px dashed #d1d5db;
-      border-radius: 12px;
-      padding: 28px 16px;
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+      padding: 32px 32px 28px;
+      color: #fff;
       text-align: center;
-      cursor: pointer;
-      transition: border-color 0.18s, background 0.18s;
-      user-select: none;
     }
-    .dropzone:hover, .dropzone.dragover { border-color: #1a56db; background: #f0f5ff; }
-    .dropzone.disabled { pointer-events: none; opacity: 0.5; }
-    .dropzone svg { display: block; margin: 0 auto 12px; color: #9ca3af; }
-    .dropzone .dz-title { font-size: 0.85rem; font-weight: 500; color: #374151; line-height: 1.5; }
-    .dropzone .dz-title span { color: #1a56db; text-decoration: underline; cursor: pointer; }
-    .dropzone .dz-sub { font-size: 0.7rem; color: #9ca3af; margin-top: 5px; }
+    .hero h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .hero p  { font-size: 0.85rem; opacity: 0.8; max-width: 480px; margin: 0 auto; line-height: 1.5; }
+    .hero-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .hero-chip {
+      font-size: 0.68rem; font-weight: 500;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 999px; padding: 4px 12px; color: rgba(255,255,255,0.9);
+    }
 
+    /* ── MAIN LAYOUT ── */
+    .main {
+      flex: 1; max-width: 1040px; width: 100%;
+      margin: 28px auto; padding: 0 20px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    /* ── TOOL CARD ── */
+    .tool-card {
+      background: #fff; border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--gray-200);
+    }
+    .tool-body { display: flex; min-height: 500px; }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      width: 360px; flex-shrink: 0;
+      border-right: 1px solid var(--gray-200);
+      display: flex; flex-direction: column; transition: width 0.3s;
+    }
+    .left-panel.solo { width: 100%; border-right: none; }
+
+    .panel-head {
+      padding: 18px 22px 14px; border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-step {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--blue); color: #fff;
+      font-size: 0.7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .panel-head-text { font-size: 0.82rem; font-weight: 600; color: var(--gray-900); }
+    .panel-head-sub  { font-size: 0.7rem; color: var(--gray-400); margin-top: 1px; }
+    .panel-body { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+
+    /* Toggle */
+    .toggle-row {
+      display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
+      padding: 12px 14px; border-radius: 10px; border: 1px solid var(--gray-200);
+      background: var(--gray-50); user-select: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .toggle-row:hover { border-color: var(--blue-mid); background: var(--blue-soft); }
+    .toggle-wrap { position: relative; flex-shrink: 0; width: 38px; height: 22px; margin-top: 1px; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider {
+      position: absolute; inset: 0; background: var(--gray-200);
+      border-radius: 999px; transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; top: 3px; left: 3px; transition: transform 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-wrap input:checked + .toggle-slider { background: var(--blue); }
+    .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(16px); }
+    .toggle-text { flex: 1; min-width: 0; }
+    .toggle-title { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray-900); }
+    .toggle-desc  { display: block; font-size: 0.7rem; color: var(--gray-400); margin-top: 2px; line-height: 1.4; }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed var(--gray-200); border-radius: 12px;
+      padding: 32px 20px; text-align: center; cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      user-select: none; background: var(--gray-50);
+    }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--blue); background: var(--blue-soft); }
+    .dropzone.disabled { pointer-events: none; opacity: 0.5; }
+    .dropzone-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--blue-soft); border: 1px solid var(--blue-mid);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px; color: var(--blue);
+    }
+    .dropzone .dz-title { font-size: 0.88rem; font-weight: 600; color: var(--gray-900); line-height: 1.5; }
+    .dropzone .dz-title span { color: var(--blue); text-decoration: underline; cursor: pointer; }
+    .dropzone .dz-sub { font-size: 0.72rem; color: var(--gray-400); margin-top: 6px; }
     #fileInput { display: none; }
 
     /* File pills */
     #fileList { display: flex; flex-direction: column; gap: 6px; }
-    .file-list-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 2px;
-    }
-    .file-list-title { font-size: 0.7rem; color: #9ca3af; }
+    .file-list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+    .file-list-title { font-size: 0.72rem; font-weight: 500; color: var(--gray-400); }
     .clear-all-btn {
-      font-size: 0.68rem; color: #ef4444; background: none; border: none;
-      cursor: pointer; padding: 0; font-family: 'Inter', sans-serif;
-      text-decoration: underline;
+      font-size: 0.7rem; color: var(--red); background: none; border: none;
+      cursor: pointer; padding: 0; font-family: 'Inter', sans-serif; font-weight: 500;
     }
-    .clear-all-btn:hover { color: #b91c1c; }
+    .clear-all-btn:hover { color: #b91c1c; text-decoration: underline; }
     .pill {
       display: flex; align-items: center; gap: 8px;
-      background: #f0f5ff; border: 1px solid #c7d7fc; border-radius: 8px;
-      padding: 7px 8px 7px 12px; font-size: 0.75rem; color: #1e40af;
+      background: var(--blue-soft); border: 1px solid var(--blue-mid);
+      border-radius: 8px; padding: 7px 8px 7px 12px;
+      font-size: 0.75rem; color: #1e40af;
     }
     .pill span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pill-remove {
       flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px;
-      background: #fef2f2; border: 1px solid #fecaca;
-      cursor: pointer; color: #ef4444; font-size: 0.75rem; font-weight: 600;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.12s, border-color 0.12s;
+      background: var(--red-soft); border: 1px solid var(--red-mid);
+      cursor: pointer; color: var(--red); font-size: 0.75rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; transition: background 0.12s;
     }
-    .pill-remove:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
+    .pill-remove:hover { background: var(--red); border-color: var(--red); color: #fff; }
 
-    /* BG removal toggle */
-    .toggle-row {
-      display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
-      padding: 10px 12px; border-radius: 10px; border: 1px solid #e5e7eb;
-      background: #fafafa; user-select: none;
-    }
-    .toggle-row:hover { border-color: #c7d7fc; background: #f0f5ff; }
-    .toggle-wrap { position: relative; flex-shrink: 0; width: 36px; height: 20px; margin-top: 2px; }
-    .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
-    .toggle-slider {
-      position: absolute; inset: 0; background: #d1d5db; border-radius: 999px;
-      transition: background 0.2s;
-    }
-    .toggle-slider::before {
-      content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%;
-      background: #fff; top: 3px; left: 3px; transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-    .toggle-wrap input:checked + .toggle-slider { background: #1a56db; }
-    .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(16px); }
-    .toggle-text { flex: 1; min-width: 0; }
-    .toggle-title { display: block; font-size: 0.8rem; font-weight: 500; color: #374151; }
-    .toggle-desc  { display: block; font-size: 0.7rem; color: #9ca3af; margin-top: 2px; line-height: 1.4; }
-
-    /* scan hint in left panel */
+    /* Scan hint */
     .scan-hint {
-      display: none;
-      font-size: 0.78rem;
-      color: #9ca3af;
-      align-items: center;
-      gap: 8px;
+      display: none; font-size: 0.78rem; color: var(--blue);
+      align-items: center; gap: 8px; padding: 8px 12px;
+      background: var(--blue-soft); border-radius: 8px; border: 1px solid var(--blue-mid);
     }
     .scan-hint.show { display: flex; }
 
-    /* ---- RIGHT panel ---- */
-    .right-panel {
-      flex: 1;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      min-width: 0;
+    /* ── RIGHT PANEL ── */
+    .right-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .panel-head.right { border-left: none; }
+    .right-body {
+      flex: 1; padding: 18px 22px;
+      display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
     }
-
-    /* empty state */
     .empty-state {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #d1d5db;
-      gap: 10px;
-      text-align: center;
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: var(--gray-200); gap: 12px; text-align: center; padding: 40px 20px;
     }
-    .empty-state svg { opacity: 0.4; }
-    .empty-state p { font-size: 0.82rem; }
+    .empty-state-icon {
+      width: 72px; height: 72px; border-radius: 20px;
+      background: var(--gray-100); border: 1px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+    }
+    .empty-state p { font-size: 0.84rem; color: var(--gray-400); line-height: 1.6; }
+    .empty-state strong { color: var(--gray-600); display: block; font-size: 0.92rem; margin-bottom: 4px; }
 
-    /* card list */
+    /* Card list */
     #cardList { display: flex; flex-direction: column; gap: 10px; }
-
     .card-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      background: #fafafa;
-      position: relative;
+      border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;
+      display: flex; background: #fff; position: relative;
+      transition: box-shadow 0.15s, border-color 0.15s;
     }
-
-    /* thumbnail column */
+    .card-item:hover { box-shadow: var(--shadow); border-color: #d1d5db; }
     .card-thumb-col {
-      width: 200px;
-      flex-shrink: 0;
-      background: #f1f5f9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      min-height: 130px;
+      width: 180px; flex-shrink: 0; background: var(--gray-50);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; min-height: 120px; border-right: 1px solid var(--gray-100);
     }
     .card-thumb {
-      max-width: 188px;
-      max-height: 118px;
-      display: block;
-      border-radius: 4px;
-      transition: transform 0.25s ease;
+      max-width: 166px; max-height: 106px;
+      display: block; border-radius: 4px; transition: transform 0.25s ease;
     }
-
-    /* info + controls column */
     .card-info-col {
-      flex: 1;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-width: 0;
+      flex: 1; padding: 14px 16px;
+      display: flex; flex-direction: column; justify-content: space-between; min-width: 0;
     }
-
     .card-meta { margin-bottom: 10px; }
-
     .card-badge {
-      display: inline-block;
-      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.5px;
-      padding: 3px 10px; border-radius: 999px; text-transform: uppercase;
-      margin-bottom: 4px;
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.6px;
+      padding: 3px 10px; border-radius: 999px; text-transform: uppercase; margin-bottom: 6px;
     }
-    .card-badge.front { background: #dbeafe; color: #1d4ed8; }
-    .card-badge.back  { background: #f3f4f6; color: #6b7280; }
-
+    .card-badge.front { background: var(--blue-soft); color: var(--blue-dark); border: 1px solid var(--blue-mid); }
+    .card-badge.back  { background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-200); }
+    .card-badge svg   { flex-shrink: 0; }
     .card-delete-btn {
       position: absolute; top: 10px; right: 10px;
-      width: 26px; height: 26px; border-radius: 6px;
-      border: 1px solid #fecaca; background: #fef2f2; cursor: pointer;
-      font-size: 0.8rem; color: #ef4444;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.12s, border-color 0.12s;
+      width: 28px; height: 28px; border-radius: 8px;
+      border: 1px solid var(--red-mid); background: var(--red-soft); cursor: pointer;
+      font-size: 0.8rem; color: var(--red);
+      display: flex; align-items: center; justify-content: center; transition: background 0.12s;
     }
-    .card-delete-btn:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
-
-    .card-pos-title {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #111;
-      margin-bottom: 2px;
-    }
-    .card-pos-hint {
-      font-size: 0.72rem;
-      color: #9ca3af;
-      line-height: 1.4;
-    }
-
-    /* controls */
-    .card-controls {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-    }
-    .ctrl-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .card-delete-btn:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    .card-pos-title { font-size: 0.84rem; font-weight: 600; color: var(--gray-900); margin-bottom: 2px; }
+    .card-pos-hint  { font-size: 0.72rem; color: var(--gray-400); line-height: 1.4; }
+    .card-controls  { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
+    .ctrl-group     { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .ctrl-group-btns { display: flex; gap: 4px; }
-    .ctrl-label { font-size: 0.6rem; color: #b0b0b0; letter-spacing: 0.3px; text-transform: uppercase; }
-
+    .ctrl-label { font-size: 0.58rem; color: var(--gray-400); letter-spacing: 0.4px; text-transform: uppercase; font-weight: 500; }
     .ctrl-btn {
-      width: 30px; height: 30px; border-radius: 7px;
-      border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
-      font-size: 0.9rem; display: flex; align-items: center; justify-content: center;
-      color: #374151; transition: background 0.12s, border-color 0.12s, color 0.12s;
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--gray-200); background: #fff; cursor: pointer;
+      font-size: 0.95rem; display: flex; align-items: center; justify-content: center;
+      color: var(--gray-600); transition: background 0.12s, border-color 0.12s, color 0.12s;
     }
-    .ctrl-btn:hover { background: #eff6ff; border-color: #1a56db; color: #1a56db; }
+    .ctrl-btn:hover { background: var(--blue-soft); border-color: var(--blue-mid); color: var(--blue); }
     .ctrl-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+    .ctrl-sep { width: 1px; height: 32px; background: var(--gray-200); margin: 0 2px; }
 
-    .ctrl-sep { width: 1px; background: #e5e7eb; align-self: stretch; margin: 0 2px; }
-
-    /* ---- bottom bar (right panel) ---- */
-    .right-bottom {
-      margin-top: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    /* Right footer */
+    .right-footer {
+      border-top: 1px solid var(--gray-100); padding: 16px 22px;
+      display: flex; flex-direction: column; gap: 10px; background: var(--gray-50);
     }
-
-    .preview-hint-bar {
-      font-size: 0.74rem;
-      color: #9ca3af;
-      line-height: 1.6;
-      padding: 10px 14px;
-      background: #f9fafb;
-      border-radius: 8px;
-      border: 1px solid #f0f0f0;
-      display: none;
+    .hint-bar {
+      font-size: 0.73rem; color: var(--gray-400); line-height: 1.6;
+      padding: 10px 14px; background: #fff;
+      border-radius: 8px; border: 1px solid var(--gray-200); display: none;
     }
-    .preview-hint-bar strong { color: #374151; }
-    .preview-hint-bar.show { display: block; }
+    .hint-bar strong { color: var(--gray-600); }
+    .hint-bar.show { display: block; }
 
     #convertBtn {
-      width: 100%; padding: 12px;
-      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+      width: 100%; padding: 13px;
+      font-family: 'Inter', sans-serif; font-size: 0.92rem; font-weight: 700;
       border: none; border-radius: 10px; cursor: pointer;
-      background: #1a56db; color: #fff;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      transition: background 0.16s;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: opacity 0.16s, transform 0.1s; letter-spacing: -0.1px;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.35);
     }
-    #convertBtn:hover:not(:disabled) { background: #1447c0; }
-    #convertBtn:disabled { background: #d1d5db; color: #9ca3af; cursor: not-allowed; }
+    #convertBtn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+    #convertBtn:active:not(:disabled) { transform: translateY(0); }
+    #convertBtn:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; box-shadow: none; }
 
     .spinner {
       width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin 0.7s linear infinite; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .banner {
-      border-radius: 8px; padding: 10px 14px;
+      border-radius: 10px; padding: 11px 14px;
       font-size: 0.82rem; font-weight: 500; display: none;
-      align-items: flex-start; gap: 8px; line-height: 1.5;
+      align-items: flex-start; gap: 10px; line-height: 1.5;
     }
-    .banner.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
-    .banner.error   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .banner.success { background: var(--green-soft); border: 1px solid var(--green-mid); color: var(--green); }
+    .banner.error   { background: var(--red-soft);   border: 1px solid var(--red-mid);   color: var(--red); }
     .banner.show    { display: flex; }
-    .banner-icon    { flex-shrink: 0; }
+    .banner-icon    { flex-shrink: 0; font-size: 1rem; }
 
-    /* ---- footer ---- */
-    footer {
-      margin-top: 16px; font-size: 0.68rem; color: #c0c0c0;
-      text-align: center; letter-spacing: 0.3px;
+    /* ── PRIVACY BAR ── */
+    .privacy-bar {
+      background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius);
+      padding: 14px 20px; display: flex; align-items: flex-start; gap: 12px; box-shadow: var(--shadow);
+    }
+    .privacy-bar-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: var(--green-soft); border: 1px solid var(--green-mid);
+      display: flex; align-items: center; justify-content: center; color: var(--green);
+    }
+    .privacy-bar-text { flex: 1; }
+    .privacy-bar-title { font-size: 0.82rem; font-weight: 700; color: var(--gray-900); margin-bottom: 2px; }
+    .privacy-bar-desc  { font-size: 0.73rem; color: var(--gray-400); line-height: 1.5; }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      text-align: center; padding: 20px;
+      font-size: 0.68rem; color: var(--gray-400); line-height: 2;
+      border-top: 1px solid var(--gray-200); background: #fff;
+    }
+
+    /* ── CROP MODAL ── */
+    .crop-modal {
+      display: none; position: fixed; inset: 0; z-index: 400;
+      background: rgba(0,0,0,0.82);
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .crop-modal.open { display: flex; }
+    .crop-card {
+      background: #fff; border-radius: 16px; padding: 22px;
+      max-width: 860px; width: 100%; max-height: 92vh;
+      overflow-y: auto; display: flex; flex-direction: column; gap: 14px;
+    }
+    .crop-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    .crop-title   { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); }
+    .crop-counter { font-size: 0.72rem; color: var(--gray-400); margin-top: 2px; }
+    .crop-hint {
+      font-size: 0.76rem; color: #1e40af;
+      background: var(--blue-soft); border: 1px solid var(--blue-mid);
+      border-radius: 8px; padding: 10px 14px; line-height: 1.5;
+    }
+    #cropCanvasWrap {
+      display: flex; justify-content: center; align-items: center;
+      background: var(--gray-100); border-radius: 10px; padding: 8px; overflow: hidden;
+    }
+    #cropCanvasWrap canvas { border-radius: 6px; display: block; max-width: 100%; max-height: 60vh; cursor: crosshair; }
+    .crop-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; flex-wrap: wrap;
+    }
+    .crop-nav { display: flex; gap: 8px; }
+    .crop-btn {
+      padding: 9px 18px; border-radius: 9px; border: 1px solid var(--gray-200);
+      background: #fff; cursor: pointer; font-family: 'Inter', sans-serif;
+      font-size: 0.82rem; font-weight: 500; color: var(--gray-600);
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .crop-btn:hover:not(:disabled) { background: var(--gray-100); border-color: #d1d5db; }
+    .crop-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .crop-btn-cancel {
+      padding: 9px 16px; border-radius: 9px; border: 1px solid var(--red-mid);
+      background: var(--red-soft); cursor: pointer; font-family: 'Inter', sans-serif;
+      font-size: 0.82rem; font-weight: 500; color: var(--red); transition: background 0.12s;
+    }
+    .crop-btn-cancel:hover { background: var(--red); color: #fff; border-color: var(--red); }
+    .crop-btn-confirm {
+      padding: 10px 22px; border-radius: 9px; border: none;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff; cursor: pointer; font-family: 'Inter', sans-serif;
+      font-size: 0.85rem; font-weight: 700;
+      transition: opacity 0.15s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+    }
+    .crop-btn-confirm:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .crop-btn-confirm:disabled { background: var(--gray-200); color: var(--gray-400); box-shadow: none; cursor: not-allowed; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 680px) {
+      .topnav  { padding: 0 16px; }
+      .hero    { padding: 24px 16px 20px; }
+      .hero h1 { font-size: 1.35rem; }
+      .main    { margin: 16px auto; padding: 0 12px; gap: 12px; }
+      .tool-body  { flex-direction: column; min-height: unset; }
+      .left-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--gray-200); }
+      .panel-body  { padding: 14px 16px; gap: 12px; }
+      .panel-head  { padding: 14px 16px 12px; }
+      .right-body  { padding: 14px 16px; }
+      .right-footer { padding: 14px 16px; }
+      .card-thumb-col { width: 120px; min-height: 90px; }
+      .card-thumb     { max-width: 108px; max-height: 76px; }
+      .card-info-col  { padding: 10px 12px; }
+      .card-pos-title { font-size: 0.8rem; }
+      .card-pos-hint  { font-size: 0.68rem; }
+      .ctrl-btn { width: 34px; height: 34px; }
+      .card-delete-btn { width: 30px; height: 30px; }
+      .privacy-bar { padding: 12px 14px; gap: 10px; }
+      .hero-chips  { gap: 6px; }
+      .crop-card   { padding: 16px; gap: 12px; }
+      .crop-btn, .crop-btn-cancel, .crop-btn-confirm { padding: 9px 12px; font-size: 0.78rem; }
     }
   </style>
 </head>
 <body>
 
-<div class="app-card">
+<!-- NAV -->
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="nav-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L6 7h12z"/>
+      </svg>
+    </div>
+    <span class="nav-title">IC<span>→</span>A4</span>
+  </div>
+  <span class="nav-badge">MyKad · 300 DPI</span>
+</nav>
 
-  <!-- header -->
-  <div class="app-header">
-    <h1>IC → A4 Converter</h1>
-    <p>MyKad &bull; ISO ID-1 &bull; 85.6 &times; 53.98 mm &bull; 300 DPI</p>
+<!-- HERO -->
+<div class="hero">
+  <h1>Convert Your IC to A4 PDF — Instantly</h1>
+  <p>Upload a photo or scan of your MyKad and get a properly sized, print-ready A4 PDF in seconds. Front &amp; back auto-arranged. No signup required.</p>
+  <div class="hero-chips">
+    <span class="hero-chip">✓ Free &amp; instant</span>
+    <span class="hero-chip">✓ Auto front &amp; back detection</span>
+    <span class="hero-chip">✓ Nothing stored on server</span>
+    <span class="hero-chip">✓ ISO ID-1 · 85.6 × 53.98 mm</span>
+  </div>
+  <div style="margin-top:18px;font-size:0.8rem;opacity:0.7;letter-spacing:0.2px;">
+    ↓ &nbsp;Upload your IC below to get started
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="tool-card">
+    <div class="tool-body">
+
+      <!-- LEFT: Upload -->
+      <div class="left-panel solo" id="leftPanel">
+        <div class="panel-head">
+          <div class="panel-step">1</div>
+          <div>
+            <div class="panel-head-text">Upload IC Files</div>
+            <div class="panel-head-sub">PDF, JPG, or PNG — multiple files OK</div>
+          </div>
+        </div>
+        <div class="panel-body">
+
+          <label class="toggle-row" id="bgToggleRow">
+            <div class="toggle-wrap">
+              <input type="checkbox" id="removeBgChk" />
+              <span class="toggle-slider"></span>
+            </div>
+            <div class="toggle-text">
+              <span class="toggle-title">Remove Background</span>
+              <span class="toggle-desc">Turn this ON if your IC is on a coloured or patterned surface. Helps improve detection.</span>
+            </div>
+          </label>
+
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+              </svg>
+            </div>
+            <div class="dz-title">Drag &amp; drop here<br/>or <span id="browseLink">click to browse</span></div>
+            <div class="dz-sub">PDF, JPG, PNG &mdash; up to 10 files</div>
+          </div>
+          <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple />
+
+          <div id="fileList"></div>
+
+          <div class="scan-hint" id="scanHint">
+            <div class="spinner" style="border-color:rgba(37,99,235,0.2);border-top-color:var(--blue);width:14px;height:14px;border-width:2px;"></div>
+            <span>Detecting cards&hellip;</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div class="right-panel" id="rightPanel" style="display:none">
+        <div class="panel-head right">
+          <div class="panel-step" id="step2Badge" style="opacity:0;transition:opacity 0.3s,background 0.3s;background:var(--blue)">2</div>
+          <div>
+            <div class="panel-head-text">Review &amp; Edit Cards</div>
+            <div class="panel-head-sub">Adjust rotation and order before converting</div>
+          </div>
+        </div>
+        <div class="right-body">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L6 7h12z"/>
+              </svg>
+            </div>
+            <div>
+              <strong>No cards yet</strong>
+              <p>Upload IC files on the left.<br/>Detected cards will appear here for review.</p>
+            </div>
+          </div>
+          <div id="cardList"></div>
+        </div>
+        <div class="right-footer">
+          <div class="hint-bar" id="hintBar">
+            <strong>Print order:</strong> 1st card = top of A4 &nbsp;&middot;&nbsp; 2nd = bottom.<br/>
+            Use <strong>↺ ↻</strong> to fix rotation &nbsp;&middot;&nbsp; <strong>↑ ↓</strong> to reorder.
+          </div>
+          <button id="convertBtn" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+            Convert to A4 PDF
+          </button>
+          <div class="banner success" id="successBanner">
+            <span class="banner-icon">✓</span>
+            <span>Done! Your PDF is downloading&hellip;</span>
+          </div>
+          <div class="banner error" id="errorBanner">
+            <span class="banner-icon">✕</span>
+            <span id="errorMsg"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- body -->
-  <div class="app-body">
-
-    <!-- LEFT: upload -->
-    <div class="left-panel">
-      <div class="panel-label">Step 1 — Upload IC files</div>
-
-      <div class="dropzone" id="dropzone">
-        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="16 16 12 12 8 16"></polyline>
-          <line x1="12" y1="12" x2="12" y2="21"></line>
-          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
-        </svg>
-        <div class="dz-title">Drag &amp; drop here<br/>or <span id="browseLink">click to browse</span></div>
-        <div class="dz-sub">PDF, JPG, PNG — multiple files OK</div>
-      </div>
-      <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple />
-
-      <div id="fileList"></div>
-
-      <label class="toggle-row" id="bgToggleRow">
-        <div class="toggle-wrap">
-          <input type="checkbox" id="removeBgChk" />
-          <span class="toggle-slider"></span>
-        </div>
-        <div class="toggle-text">
-          <span class="toggle-title">Remove Background</span>
-          <span class="toggle-desc">Erases the background before card detection. Useful when IC is on a coloured or patterned surface.</span>
-        </div>
-      </label>
-
-      <div class="scan-hint" id="scanHint">
-        <div class="spinner" style="border-color:rgba(0,0,0,0.1);border-top-color:#1a56db;width:14px;height:14px;border-width:2px;"></div>
-        <span>Detecting cards&hellip;</span>
-      </div>
+  <!-- PRIVACY BAR -->
+  <div class="privacy-bar">
+    <div class="privacy-bar-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
     </div>
-
-    <!-- RIGHT: preview + edit -->
-    <div class="right-panel">
-      <div class="panel-label">Step 2 — Review &amp; Edit Cards</div>
-
-      <!-- empty state -->
-      <div class="empty-state" id="emptyState">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-          <path d="M16 3h-8l-2 4h12z"></path>
-        </svg>
-        <p>Upload IC files on the left.<br/>Detected cards will appear here for review.</p>
-      </div>
-
-      <!-- card list -->
-      <div id="cardList"></div>
-
-      <!-- bottom bar -->
-      <div class="right-bottom">
-        <div class="preview-hint-bar" id="hintBar">
-          <strong>Print order:</strong> 1st card = top of A4 &nbsp;·&nbsp; 2nd card = bottom of A4.<br/>
-          Use <strong>↺ ↻</strong> to fix rotation &nbsp;·&nbsp; Use <strong>↑ ↓</strong> to swap front &amp; back.
-        </div>
-        <button id="convertBtn" disabled>Convert to A4 PDF</button>
-        <div class="banner success" id="successBanner">
-          <span class="banner-icon">✓</span>
-          <span>Done! Your PDF is downloading&hellip;</span>
-        </div>
-        <div class="banner error" id="errorBanner">
-          <span class="banner-icon">✕</span>
-          <span id="errorMsg"></span>
-        </div>
-      </div>
+    <div class="privacy-bar-text">
+      <div class="privacy-bar-title">Your IC data is 100% private</div>
+      <div class="privacy-bar-desc">All files are processed on our server and <strong>never stored, shared, or logged</strong>. Files and PDFs are deleted from memory immediately after download. No personal data is retained.</div>
     </div>
+  </div>
+</div>
 
-  </div><!-- end app-body -->
-</div><!-- end app-card -->
+<!-- FOOTER -->
+<footer class="site-footer">
+  &copy; 2026 Aydyn Naoki &nbsp;&middot;&nbsp; All rights reserved &nbsp;&middot;&nbsp; For authorized personal use only<br/>
+  Print at <strong>100% Actual Size</strong> &middot; Do not scale to fit
+</footer>
 
-<footer>Print at 100% Actual Size &middot; Do not scale to fit</footer>
+<!-- CROP MODAL -->
+<div class="crop-modal" id="cropModal">
+  <div class="crop-card">
+    <div class="crop-header">
+      <div>
+        <div class="crop-title">Manual Crop</div>
+        <div class="crop-counter" id="cropCounter">Image 1 of 1</div>
+      </div>
+      <button class="crop-btn-cancel" id="cancelCropBtn">✕ Cancel</button>
+    </div>
+    <div class="crop-hint">
+      Auto-detection could not find a card. Drag the <strong>4 blue corner handles</strong> to outline your IC card boundary, then click <strong>Confirm Crop</strong>.
+    </div>
+    <div id="cropCanvasWrap"></div>
+    <div class="crop-footer">
+      <div class="crop-nav">
+        <button class="crop-btn" id="cropPrevBtn" disabled>← Prev</button>
+        <button class="crop-btn" id="cropNextBtn" disabled>Next →</button>
+      </div>
+      <button class="crop-btn-confirm" id="confirmCropBtn">✓ Confirm Crop</button>
+    </div>
+  </div>
+</div>
 
 <script>
-  const dropzone       = document.getElementById('dropzone');
-  const fileInput      = document.getElementById('fileInput');
-  const browseLink     = document.getElementById('browseLink');
-  const fileList       = document.getElementById('fileList');
-  const scanHint       = document.getElementById('scanHint');
-  const removeBgChk    = document.getElementById('removeBgChk');
-  const emptyState     = document.getElementById('emptyState');
-  const cardList       = document.getElementById('cardList');
-  const hintBar        = document.getElementById('hintBar');
-  const convertBtn     = document.getElementById('convertBtn');
-  const successBanner  = document.getElementById('successBanner');
-  const errorBanner    = document.getElementById('errorBanner');
-  const errorMsg       = document.getElementById('errorMsg');
+  // ── DOM refs ────────────────────────────────────────────────────────────────
+  const dropzone      = document.getElementById('dropzone');
+  const fileInput     = document.getElementById('fileInput');
+  const browseLink    = document.getElementById('browseLink');
+  const fileList      = document.getElementById('fileList');
+  const scanHint      = document.getElementById('scanHint');
+  const removeBgChk   = document.getElementById('removeBgChk');
+  const emptyState    = document.getElementById('emptyState');
+  const cardList      = document.getElementById('cardList');
+  const hintBar       = document.getElementById('hintBar');
+  const convertBtn    = document.getElementById('convertBtn');
+  const successBanner = document.getElementById('successBanner');
+  const errorBanner   = document.getElementById('errorBanner');
+  const errorMsg      = document.getElementById('errorMsg');
 
   let selectedFiles = [];
   let sessionId     = null;
   let cards         = [];
 
-  /* ---- file selection ---- */
+  // ── file input ──────────────────────────────────────────────────────────────
   browseLink.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
   dropzone.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
-  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('dragover'); });
   dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
   dropzone.addEventListener('drop', e => {
     e.preventDefault(); dropzone.classList.remove('dragover'); addFiles(e.dataTransfer.files);
@@ -450,8 +626,7 @@
       if (!selectedFiles.find(x => x.name === f.name && x.size === f.size))
         selectedFiles.push(f);
     }
-    renderPills();
-    hideBanners();
+    renderPills(); hideBanners();
     if (selectedFiles.length) loadPreview(); else resetPreview();
   }
 
@@ -465,18 +640,13 @@
     selectedFiles.forEach((f, i) => {
       const pill = document.createElement('div');
       pill.className = 'pill';
-      pill.innerHTML = `<span title="${f.name}">${f.name}</span><button class="pill-remove" data-idx="${i}" title="Remove this file">✕</button>`;
+      pill.innerHTML = `<span title="${f.name}">${f.name}</span><button class="pill-remove" data-idx="${i}" title="Remove">✕</button>`;
       fileList.appendChild(pill);
     });
   }
 
   fileList.addEventListener('click', e => {
-    if (e.target.id === 'clearAllBtn') {
-      selectedFiles = [];
-      renderPills();
-      resetPreview();
-      return;
-    }
+    if (e.target.id === 'clearAllBtn') { selectedFiles = []; renderPills(); resetPreview(); return; }
     const btn = e.target.closest('button[data-idx]');
     if (!btn) return;
     selectedFiles.splice(parseInt(btn.dataset.idx), 1);
@@ -484,7 +654,7 @@
     if (selectedFiles.length) loadPreview(); else resetPreview();
   });
 
-  /* ---- preview fetch ---- */
+  // ── preview ─────────────────────────────────────────────────────────────────
   async function loadPreview() {
     resetPreview();
     scanHint.querySelector('span').textContent = removeBgChk.checked
@@ -499,17 +669,23 @@
 
     try {
       const res = await fetch('/preview', { method: 'POST', body: fd });
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.detail || 'Detection failed.');
-      }
+      if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.detail || 'Detection failed.'); }
       const data = await res.json();
+
+      if (data.needs_crop && data.images && data.images.length) {
+        openCropModal(data.session_id, data.images);
+        return;
+      }
+
       sessionId = data.session_id;
       cards = data.cards.map(c => ({ ...c, rotation: 0 }));
       renderCards();
       emptyState.style.display = 'none';
       hintBar.classList.add('show');
       convertBtn.disabled = false;
+      document.getElementById('step2Badge').style.opacity = '1';
+      document.getElementById('rightPanel').style.display = 'flex';
+      document.getElementById('leftPanel').classList.remove('solo');
     } catch (err) {
       showError(err.message);
     } finally {
@@ -518,35 +694,33 @@
     }
   }
 
-  /* ---- render card list ---- */
+  // ── card render ─────────────────────────────────────────────────────────────
   function thumbTransform(rot) {
     const r = ((rot % 360) + 360) % 360;
-    return (r === 90 || r === 270) ? `rotate(${r}deg) scale(0.6)` : `rotate(${r}deg)`;
+    return (r === 90 || r === 270) ? `rotate(${r}deg) scale(0.58)` : `rotate(${r}deg)`;
   }
 
   function renderCards() {
     cardList.innerHTML = '';
     cards.forEach((c, idx) => {
-      const isFirst = idx === 0;
-      const badgeCls   = isFirst ? 'front' : 'back';
-      const badgeTxt   = isFirst ? 'Front' : 'Back';
-      const posTitle   = isFirst ? 'Prints on TOP of A4' : 'Prints on BOTTOM of A4';
-      const posHint    = isFirst
-        ? 'This is the top card on the printed page.'
-        : 'This is the bottom card on the printed page.';
-
+      const isFirst  = idx === 0;
+      const badgeCls = isFirst ? 'front' : 'back';
+      const badgeTxt = isFirst ? 'Front' : 'Back';
+      const posTitle = isFirst ? 'Prints on TOP of A4' : 'Prints on BOTTOM of A4';
+      const posHint  = isFirst ? 'Top position on the printed page.' : 'Bottom position on the printed page.';
       const item = document.createElement('div');
       item.className = 'card-item';
       item.innerHTML = `
-        <button class="card-delete-btn" title="Remove this card" onclick="deleteCard(${idx})">✕</button>
+        <button class="card-delete-btn" title="Remove card" onclick="deleteCard(${idx})">✕</button>
         <div class="card-thumb-col">
-          <img class="card-thumb"
-               src="data:image/jpeg;base64,${c.image}"
-               style="transform:${thumbTransform(c.rotation)}" />
+          <img class="card-thumb" src="data:image/jpeg;base64,${c.image}" style="transform:${thumbTransform(c.rotation)}" />
         </div>
         <div class="card-info-col">
           <div class="card-meta">
-            <span class="card-badge ${badgeCls}">${badgeTxt}</span>
+            <span class="card-badge ${badgeCls}">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+              ${badgeTxt}
+            </span>
             <div class="card-pos-title">${posTitle}</div>
             <div class="card-pos-hint">${posHint}</div>
           </div>
@@ -567,56 +741,36 @@
               <div class="ctrl-label">Reorder</div>
             </div>
           </div>
-        </div>
-      `;
+        </div>`;
       cardList.appendChild(item);
     });
   }
 
-  function rotate(idx, deg) {
-    cards[idx].rotation = (cards[idx].rotation + deg + 360) % 360;
-    renderCards();
-  }
-
+  function rotate(idx, deg) { cards[idx].rotation = (cards[idx].rotation + deg + 360) % 360; renderCards(); }
   function move(idx, dir) {
     const ni = idx + dir;
     if (ni < 0 || ni >= cards.length) return;
-    [cards[idx], cards[ni]] = [cards[ni], cards[idx]];
-    renderCards();
+    [cards[idx], cards[ni]] = [cards[ni], cards[idx]]; renderCards();
   }
+  function deleteCard(idx) { cards.splice(idx, 1); if (!cards.length) resetPreview(); else renderCards(); }
 
-  function deleteCard(idx) {
-    cards.splice(idx, 1);
-    if (cards.length === 0) {
-      resetPreview();
-    } else {
-      renderCards();
-    }
-  }
-
-  /* ---- convert ---- */
+  // ── convert ─────────────────────────────────────────────────────────────────
   convertBtn.addEventListener('click', async () => {
     if (!sessionId || !cards.length) return;
-    hideBanners();
-    setConverting(true);
-
+    hideBanners(); setConverting(true);
     try {
       const res = await fetch('/convert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          session_id: sessionId,
-          order: cards.map(c => ({ id: c.id, rotation: c.rotation }))
-        })
+        body: JSON.stringify({ session_id: sessionId, order: cards.map(c => ({ id: c.id, rotation: c.rotation })) })
       });
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.detail || 'Conversion failed.');
-      }
+      if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.detail || 'Conversion failed.'); }
       const blob = await res.blob();
       const url  = URL.createObjectURL(blob);
       const a    = document.createElement('a');
-      a.href = url; a.download = 'ic_a4_output.pdf'; a.click();
+      const d    = new Date();
+      const stamp = d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2);
+      a.href = url; a.download = `MyKad_PrintReady_${stamp}.pdf`; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 5000);
       successBanner.classList.add('show');
       setTimeout(reset, 3000);
@@ -627,40 +781,218 @@
     }
   });
 
-  /* ---- helpers ---- */
   function setConverting(on) {
     convertBtn.disabled = on || !sessionId;
     convertBtn.innerHTML = on
       ? '<div class="spinner"></div>Processing&hellip;'
-      : 'Convert to A4 PDF';
+      : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Convert to A4 PDF`;
   }
 
-  function hideBanners() {
-    successBanner.classList.remove('show');
-    errorBanner.classList.remove('show');
-  }
-
-  function showError(msg) {
-    errorMsg.textContent = msg;
-    errorBanner.classList.add('show');
-  }
+  function hideBanners() { successBanner.classList.remove('show'); errorBanner.classList.remove('show'); }
+  function showError(msg) { errorMsg.textContent = msg; errorBanner.classList.add('show'); }
 
   function resetPreview() {
     sessionId = null; cards = [];
-    cardList.innerHTML = '';
-    emptyState.style.display = '';
-    hintBar.classList.remove('show');
-    convertBtn.disabled = true;
-    convertBtn.innerHTML = 'Convert to A4 PDF';
+    cardList.innerHTML = ''; emptyState.style.display = '';
+    hintBar.classList.remove('show'); convertBtn.disabled = true;
+    document.getElementById('step2Badge').style.opacity = '0';
+    document.getElementById('rightPanel').style.display = 'none';
+    document.getElementById('leftPanel').classList.add('solo');
+    document.getElementById('cropModal').classList.remove('open');
+    cropImages = []; cropCorners = []; cropSessionId = null; cropIdx = 0;
+    convertBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Convert to A4 PDF`;
   }
 
-  function reset() {
-    selectedFiles = [];
-    fileList.innerHTML = '';
-    fileInput.value = '';
-    hideBanners();
-    resetPreview();
+  function reset() { selectedFiles = []; fileList.innerHTML = ''; fileInput.value = ''; hideBanners(); resetPreview(); }
+
+  // ── CROP MODAL ──────────────────────────────────────────────────────────────
+  let cropSessionId = null;
+  let cropImages    = [];
+  let cropCorners   = [];
+  let cropIdx       = 0;
+  let dragCorner    = -1;
+  let cropCanvas    = null;
+  let cropCtx       = null;
+  let cropImg       = null;
+
+  function openCropModal(sid, images) {
+    cropSessionId = sid;
+    cropImages    = images;
+    cropCorners   = images.map(() => null);
+    cropIdx       = 0;
+    showCropSlide(0);
+    document.getElementById('cropModal').classList.add('open');
   }
+
+  function showCropSlide(i) {
+    cropIdx = i;
+    const img = cropImages[i];
+    document.getElementById('cropCounter').textContent = `Image ${i+1} of ${cropImages.length}`;
+    document.getElementById('cropPrevBtn').disabled = i === 0;
+    document.getElementById('cropNextBtn').disabled = i === cropImages.length - 1;
+
+    const wrap = document.getElementById('cropCanvasWrap');
+    wrap.innerHTML = '';
+    dragCorner = -1;
+
+    cropCanvas = document.createElement('canvas');
+    cropCanvas.width  = img.w;
+    cropCanvas.height = img.h;
+    cropCtx = cropCanvas.getContext('2d');
+    wrap.appendChild(cropCanvas);
+
+    if (!cropCorners[i]) {
+      const p = 0.15;
+      cropCorners[i] = [
+        { x: p,   y: p   },
+        { x: 1-p, y: p   },
+        { x: 1-p, y: 1-p },
+        { x: p,   y: 1-p },
+      ];
+    }
+
+    cropImg = new Image();
+    cropImg.onload = drawCrop;
+    cropImg.src = `data:image/jpeg;base64,${img.image}`;
+
+    cropCanvas.addEventListener('mousedown',  onCropDown);
+    cropCanvas.addEventListener('mousemove',  onCropMove);
+    cropCanvas.addEventListener('mouseup',    onCropUp);
+    cropCanvas.addEventListener('mouseleave', onCropUp);
+    cropCanvas.addEventListener('touchstart', e => { e.preventDefault(); onCropDown(e); }, { passive: false });
+    cropCanvas.addEventListener('touchmove',  e => { e.preventDefault(); onCropMove(e); }, { passive: false });
+    cropCanvas.addEventListener('touchend',   onCropUp);
+  }
+
+  function drawCrop() {
+    if (!cropCanvas || !cropCtx || !cropImg || !cropImg.complete) return;
+    const cw = cropCanvas.width, ch = cropCanvas.height;
+    const corners = cropCorners[cropIdx].map(c => ({ x: c.x * cw, y: c.y * ch }));
+
+    cropCtx.clearRect(0, 0, cw, ch);
+    cropCtx.drawImage(cropImg, 0, 0, cw, ch);
+
+    cropCtx.save();
+    cropCtx.fillStyle = 'rgba(0,0,0,0.52)';
+    cropCtx.fillRect(0, 0, cw, ch);
+    cropCtx.globalCompositeOperation = 'destination-out';
+    cropCtx.beginPath();
+    cropCtx.moveTo(corners[0].x, corners[0].y);
+    corners.slice(1).forEach(c => cropCtx.lineTo(c.x, c.y));
+    cropCtx.closePath();
+    cropCtx.fill();
+    cropCtx.restore();
+
+    cropCtx.save();
+    cropCtx.beginPath();
+    cropCtx.moveTo(corners[0].x, corners[0].y);
+    corners.slice(1).forEach(c => cropCtx.lineTo(c.x, c.y));
+    cropCtx.closePath();
+    cropCtx.clip();
+    cropCtx.drawImage(cropImg, 0, 0, cw, ch);
+    cropCtx.restore();
+
+    cropCtx.strokeStyle = '#2563eb';
+    cropCtx.lineWidth   = 2;
+    cropCtx.beginPath();
+    cropCtx.moveTo(corners[0].x, corners[0].y);
+    corners.slice(1).forEach(c => cropCtx.lineTo(c.x, c.y));
+    cropCtx.closePath();
+    cropCtx.stroke();
+
+    corners.forEach((c, i) => {
+      cropCtx.beginPath();
+      cropCtx.arc(c.x, c.y, 16, 0, Math.PI * 2);
+      cropCtx.fillStyle   = i === dragCorner ? '#1d4ed8' : '#2563eb';
+      cropCtx.fill();
+      cropCtx.strokeStyle = '#fff';
+      cropCtx.lineWidth   = 2.5;
+      cropCtx.stroke();
+      cropCtx.fillStyle    = '#fff';
+      cropCtx.font         = 'bold 11px Inter,sans-serif';
+      cropCtx.textAlign    = 'center';
+      cropCtx.textBaseline = 'middle';
+      cropCtx.fillText(i + 1, c.x, c.y);
+    });
+  }
+
+  function getCropPos(e) {
+    const rect   = cropCanvas.getBoundingClientRect();
+    const scaleX = cropCanvas.width  / rect.width;
+    const scaleY = cropCanvas.height / rect.height;
+    const src    = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - rect.left) * scaleX, y: (src.clientY - rect.top) * scaleY };
+  }
+
+  function findHandle(pos) {
+    const cw = cropCanvas.width, ch = cropCanvas.height;
+    return cropCorners[cropIdx].findIndex(c => {
+      const dx = c.x*cw - pos.x, dy = c.y*ch - pos.y;
+      return Math.sqrt(dx*dx + dy*dy) < 22;
+    });
+  }
+
+  function onCropDown(e) {
+    const pos = getCropPos(e); dragCorner = findHandle(pos);
+    if (dragCorner >= 0) cropCanvas.style.cursor = 'grabbing';
+  }
+  function onCropMove(e) {
+    const pos = getCropPos(e);
+    if (dragCorner >= 0) {
+      const cw = cropCanvas.width, ch = cropCanvas.height;
+      cropCorners[cropIdx][dragCorner] = {
+        x: Math.max(0, Math.min(1, pos.x / cw)),
+        y: Math.max(0, Math.min(1, pos.y / ch)),
+      };
+      drawCrop();
+    } else {
+      cropCanvas.style.cursor = findHandle(pos) >= 0 ? 'grab' : 'crosshair';
+    }
+  }
+  function onCropUp() { dragCorner = -1; if (cropCanvas) cropCanvas.style.cursor = 'crosshair'; }
+
+  document.getElementById('cropPrevBtn').addEventListener('click', () => { if (cropIdx > 0) showCropSlide(cropIdx - 1); });
+  document.getElementById('cropNextBtn').addEventListener('click', () => { if (cropIdx < cropImages.length - 1) showCropSlide(cropIdx + 1); });
+  document.getElementById('cancelCropBtn').addEventListener('click', () => {
+    document.getElementById('cropModal').classList.remove('open');
+  });
+
+  document.getElementById('confirmCropBtn').addEventListener('click', async () => {
+    const crops = cropImages.map((img, i) => ({
+      page_id: img.id,
+      points: (cropCorners[i] || []).map(c => [c.x, c.y]),
+    })).filter(c => c.points.length === 4);
+
+    if (!crops.length) return;
+    const btn = document.getElementById('confirmCropBtn');
+    btn.disabled = true; btn.textContent = 'Processing…';
+
+    try {
+      const res = await fetch('/crop-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: cropSessionId, crops }),
+      });
+      if (!res.ok) { const j = await res.json().catch(() => ({})); throw new Error(j.detail || 'Crop failed.'); }
+      const data = await res.json();
+
+      cards.push(...data.cards.map(c => ({ ...c, rotation: 0 })));
+      sessionId = cropSessionId;
+      renderCards();
+      emptyState.style.display = 'none';
+      hintBar.classList.add('show');
+      convertBtn.disabled = false;
+      document.getElementById('step2Badge').style.opacity = '1';
+      document.getElementById('rightPanel').style.display = 'flex';
+      document.getElementById('leftPanel').classList.remove('solo');
+      document.getElementById('cropModal').classList.remove('open');
+    } catch (err) {
+      showError(err.message);
+      document.getElementById('cropModal').classList.remove('open');
+    } finally {
+      btn.disabled = false; btn.textContent = '✓ Confirm Crop';
+    }
+  });
 </script>
 </body>
 </html>
