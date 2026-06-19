@@ -363,8 +363,8 @@
           <span class="toggle-slider"></span>
         </div>
         <div class="toggle-text">
-          <span class="toggle-title">Remove Background (AI)</span>
-          <span class="toggle-desc">Cleans complex/coloured backgrounds before detection. Slower — first run downloads ~176 MB model.</span>
+          <span class="toggle-title">Remove Background</span>
+          <span class="toggle-desc">Erases the background before card detection. Useful when IC is on a coloured or patterned surface.</span>
         </div>
       </label>
 
@@ -488,7 +488,7 @@
   async function loadPreview() {
     resetPreview();
     scanHint.querySelector('span').textContent = removeBgChk.checked
-      ? 'Removing background & detecting cards… (may take ~10–30s on first run)'
+      ? 'Removing background & detecting cards…'
       : 'Detecting cards…';
     scanHint.classList.add('show');
     dropzone.classList.add('disabled');

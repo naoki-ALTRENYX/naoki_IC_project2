@@ -159,26 +159,23 @@ def build_a4(front, back):
         place(canvas, back, cx, top + CARD_H + gap + CARD_H // 2)
     return canvas
 
-# ---- background removal (AI) ------------------------------------------------
-try:
-    from rembg import remove as _rembg_fn
-    REMBG_AVAILABLE = True
-except Exception:
-    _rembg_fn = None
-    REMBG_AVAILABLE = False
-
+# ---- background removal (OpenCV GrabCut — no extra dependencies) -------------
 def _remove_bg(img_bgr: np.ndarray) -> np.ndarray:
-    if not REMBG_AVAILABLE:
-        raise HTTPException(
-            status_code=503,
-            detail="Background removal is not available on this server. Turn off the toggle and try again."
-        )
-    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-    pil_in = Image.fromarray(img_rgb)
-    pil_out = _rembg_fn(pil_in).convert("RGBA")
-    bg = Image.new("RGBA", pil_out.size, (255, 255, 255, 255))
-    bg.paste(pil_out, mask=pil_out.split()[3])
-    return cv2.cvtColor(np.array(bg.convert("RGB")), cv2.COLOR_RGB2BGR)
+    h, w = img_bgr.shape[:2]
+    mask     = np.zeros((h, w), np.uint8)
+    bgd_mdl  = np.zeros((1, 65), np.float64)
+    fgd_mdl  = np.zeros((1, 65), np.float64)
+    margin   = max(10, min(w, h) // 25)
+    rect     = (margin, margin, w - 2 * margin, h - 2 * margin)
+    cv2.grabCut(img_bgr, mask, rect, bgd_mdl, fgd_mdl, 8, cv2.GC_INIT_WITH_RECT)
+    fg_mask  = np.where((mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 1, 0).astype(np.uint8)
+    # morphological clean-up: fill holes, remove fringe
+    kernel   = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
+    fg_mask  = cv2.morphologyEx(fg_mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+    fg_mask  = cv2.morphologyEx(fg_mask, cv2.MORPH_OPEN,  kernel, iterations=1)
+    result   = img_bgr.copy()
+    result[fg_mask == 0] = 255   # background → white
+    return result
 
 
 # ---- orientation & front/back detection -------------------------------------
