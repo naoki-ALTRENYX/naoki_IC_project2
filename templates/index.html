@@ -90,18 +90,31 @@
 
     /* File pills */
     #fileList { display: flex; flex-direction: column; gap: 6px; }
+    .file-list-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2px;
+    }
+    .file-list-title { font-size: 0.7rem; color: #9ca3af; }
+    .clear-all-btn {
+      font-size: 0.68rem; color: #ef4444; background: none; border: none;
+      cursor: pointer; padding: 0; font-family: 'Inter', sans-serif;
+      text-decoration: underline;
+    }
+    .clear-all-btn:hover { color: #b91c1c; }
     .pill {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 8px;
       background: #f0f5ff; border: 1px solid #c7d7fc; border-radius: 8px;
-      padding: 6px 10px; font-size: 0.75rem; color: #1e40af;
+      padding: 7px 8px 7px 12px; font-size: 0.75rem; color: #1e40af;
     }
     .pill span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .pill button {
-      background: none; border: none; cursor: pointer; color: #93a3b8;
-      padding: 0; line-height: 1; font-size: 1rem; flex-shrink: 0;
-      transition: color 0.12s;
+    .pill-remove {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px;
+      background: #fef2f2; border: 1px solid #fecaca;
+      cursor: pointer; color: #ef4444; font-size: 0.75rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s, border-color 0.12s;
     }
-    .pill button:hover { color: #ef4444; }
+    .pill-remove:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
 
     /* BG removal toggle */
     .toggle-row {
@@ -444,15 +457,26 @@
 
   function renderPills() {
     fileList.innerHTML = '';
+    if (!selectedFiles.length) return;
+    const header = document.createElement('div');
+    header.className = 'file-list-header';
+    header.innerHTML = `<span class="file-list-title">${selectedFiles.length} file${selectedFiles.length > 1 ? 's' : ''} selected</span><button class="clear-all-btn" id="clearAllBtn">Clear all</button>`;
+    fileList.appendChild(header);
     selectedFiles.forEach((f, i) => {
       const pill = document.createElement('div');
       pill.className = 'pill';
-      pill.innerHTML = `<span title="${f.name}">${f.name}</span><button data-idx="${i}">&times;</button>`;
+      pill.innerHTML = `<span title="${f.name}">${f.name}</span><button class="pill-remove" data-idx="${i}" title="Remove this file">✕</button>`;
       fileList.appendChild(pill);
     });
   }
 
   fileList.addEventListener('click', e => {
+    if (e.target.id === 'clearAllBtn') {
+      selectedFiles = [];
+      renderPills();
+      resetPreview();
+      return;
+    }
     const btn = e.target.closest('button[data-idx]');
     if (!btn) return;
     selectedFiles.splice(parseInt(btn.dataset.idx), 1);
